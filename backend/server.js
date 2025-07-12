@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use('/api', apiRateLimit);
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   dbName: 'mob_notifications'
