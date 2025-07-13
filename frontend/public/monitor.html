@@ -23,6 +23,32 @@
       const API_BASE_URL = 'https://notify-oxh1.onrender.com/api';
       alert('API_BASE_URL: ' + API_BASE_URL);
 
+      // Robust notification permission helper
+      window.askNotificationPermission = async function() {
+        alert('askNotificationPermission() called');
+        if (!('Notification' in window)) {
+          alert('This browser does not support notifications.');
+          return 'unsupported';
+        }
+        if (Notification.permission === 'granted') {
+          alert('Notification permission already granted.');
+          return 'granted';
+        }
+        if (Notification.permission === 'denied') {
+          alert('Notification permission previously denied.');
+          return 'denied';
+        }
+        // Try the standard API
+        try {
+          const permission = await Notification.requestPermission();
+          alert('Notification.requestPermission() result: ' + permission);
+          return permission;
+        } catch (e) {
+          alert('Error in Notification.requestPermission: ' + e);
+          return 'error';
+        }
+      }
+
       window.getDeviceInfo = function() {
         alert('getDeviceInfo() called');
         try {
@@ -50,26 +76,34 @@
 
       window.requestPermission = async function() {
         alert('requestPermission() called');
-        try {
-          alert('About to call Notification.requestPermission()');
-          const permission = await Notification.requestPermission();
-          alert('Notification permission result: ' + permission);
-          if (permission === 'granted') {
-            alert('Permission granted, calling registerServiceWorker()');
-            document.querySelector('.status').innerHTML = '<p>✅ Permission granted. Registering service worker...</p>';
-            try {
-              await window.registerServiceWorker();
-              alert('registerServiceWorker() finished');
-            } catch (e) {
-              alert('Error in registerServiceWorker: ' + e);
-            }
-          } else {
-            alert('Permission denied');
-            document.querySelector('.status').innerHTML = '<p>❌ Permission denied. Please allow notifications.</p>';
+        // Feature detection
+        if (!('Notification' in window)) {
+          alert('Notifications are not supported in this browser.');
+          return;
+        }
+        if (!('serviceWorker' in navigator)) {
+          alert('Service workers are not supported in this browser.');
+          return;
+        }
+        // Ask for permission
+        const permission = await window.askNotificationPermission();
+        if (permission === 'granted') {
+          alert('Permission granted, calling registerServiceWorker()');
+          document.querySelector('.status').innerHTML = '<p>✅ Permission granted. Registering service worker...</p>';
+          try {
+            await window.registerServiceWorker();
+            alert('registerServiceWorker() finished');
+          } catch (e) {
+            alert('Error in registerServiceWorker: ' + e);
           }
-        } catch (e) {
-          alert('Error requesting notification permission: ' + e);
-          document.querySelector('.status').innerHTML = '<p>❌ Error requesting permission.</p>';
+        } else if (permission === 'denied') {
+          alert('Permission denied by user.');
+          document.querySelector('.status').innerHTML = '<p>❌ Permission denied. Please allow notifications.</p>';
+        } else if (permission === 'unsupported') {
+          document.querySelector('.status').innerHTML = '<p>❌ Notifications not supported on this device.</p>';
+        } else {
+          alert('Permission not granted: ' + permission);
+          document.querySelector('.status').innerHTML = '<p>❌ Permission not granted: ' + permission + '</p>';
         }
         alert('requestPermission() end');
       }
