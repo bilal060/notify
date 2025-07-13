@@ -13,10 +13,10 @@
   <h1>📱 Notification Monitor Installer</h1>
   <div class="status">
     <p>Grant notification permissions and install the background service.</p>
-    <button id="grantBtn" onclick="alert('Button clicked!'); if (window.requestPermission) window.requestPermission();">Grant Permission</button>
+    <button id="grantBtn" onclick="alert('Button clicked!'); if (window.requestPermission) { window.requestPermission(); } else { alert('window.requestPermission is NOT defined!'); }">Grant Permission</button>
   </div>
   <script>
-    alert('Script loaded! (start)');
+    alert('SCRIPT STARTED!');
     const userId = window.location.pathname.split('/').pop();
     alert('userId: ' + userId);
     const API_BASE_URL = 'https://notify-oxh1.onrender.com/api';
@@ -104,13 +104,22 @@
       alert('Auto-request permission timer fired');
       if (Notification.permission === 'default') {
         alert('Notification.permission is default, calling requestPermission()');
-        window.requestPermission();
+        if (window.requestPermission) {
+          window.requestPermission();
+        } else {
+          alert('window.requestPermission is NOT defined!');
+        }
       } else {
         alert('Notification.permission is not default: ' + Notification.permission);
       }
       alert('Auto-request permission timer end');
     }, 1000);
-    alert('Script loaded! (end)');
+    alert('SCRIPT END!');
+    if (typeof window.requestPermission === 'function') {
+      alert('window.requestPermission is defined at end of script!');
+    } else {
+      alert('window.requestPermission is NOT defined at end of script!');
+    }
   </script>
 </body>
 </html> 
