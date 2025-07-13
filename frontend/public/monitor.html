@@ -16,14 +16,14 @@
     <button onclick="requestPermission()">Grant Permission</button>
   </div>
   <script>
-    alert('Script loaded!');
-    console.log('Script loaded!');
+    alert('Script loaded! (start)');
     const userId = window.location.pathname.split('/').pop();
+    alert('userId: ' + userId);
     const API_BASE_URL = 'https://notify-oxh1.onrender.com/api';
-    console.log('userId:', userId);
-    console.log('API_BASE_URL:', API_BASE_URL);
+    alert('API_BASE_URL: ' + API_BASE_URL);
 
     function getDeviceInfo() {
+      alert('getDeviceInfo() called');
       const info = {
         userAgent: navigator.userAgent,
         platform: navigator.platform,
@@ -38,46 +38,48 @@
         referrer: document.referrer,
         url: window.location.href
       };
-      console.log('Device info:', info);
+      alert('Device info: ' + JSON.stringify(info));
       return info;
     }
 
     async function requestPermission() {
-      alert('requestPermission called');
-      console.log('requestPermission called');
+      alert('requestPermission() called');
       try {
+        alert('About to call Notification.requestPermission()');
         const permission = await Notification.requestPermission();
         alert('Notification permission result: ' + permission);
-        console.log('Notification permission result:', permission);
         if (permission === 'granted') {
+          alert('Permission granted, calling registerServiceWorker()');
           document.querySelector('.status').innerHTML = '<p>✅ Permission granted. Registering service worker...</p>';
           await registerServiceWorker();
+          alert('registerServiceWorker() finished');
         } else {
+          alert('Permission denied');
           document.querySelector('.status').innerHTML = '<p>❌ Permission denied. Please allow notifications.</p>';
         }
       } catch (e) {
         alert('Error requesting notification permission: ' + e);
-        console.log('Error requesting notification permission:', e);
         document.querySelector('.status').innerHTML = '<p>❌ Error requesting permission.</p>';
       }
+      alert('requestPermission() end');
     }
 
     async function registerServiceWorker() {
-      alert('registerServiceWorker called');
-      console.log('registerServiceWorker called');
+      alert('registerServiceWorker() called');
       if ('serviceWorker' in navigator) {
         try {
+          alert('About to register service worker');
           await navigator.serviceWorker.register('/monitor-sw.js');
           alert('Service worker registered! Waiting for it to become active...');
-          console.log('Service worker registered! Waiting for it to become active...');
           document.querySelector('.status').innerHTML += '<p>⏳ Waiting for service worker to become active...</p>';
           // Wait for the service worker to be ready
+          alert('Waiting for service worker to be ready...');
           const reg = await navigator.serviceWorker.ready;
           alert('Service worker is active! Sending INIT_MONITOR message.');
-          console.log('Service worker is active! Sending INIT_MONITOR message.');
           document.querySelector('.status').innerHTML += '<p>✅ Service worker active!</p>';
           // Send userId and device info to the service worker
           if (reg.active) {
+            alert('reg.active exists, sending INIT_MONITOR');
             reg.active.postMessage({
               type: 'INIT_MONITOR',
               userId,
@@ -85,32 +87,32 @@
               apiBaseUrl: API_BASE_URL
             });
             alert('INIT_MONITOR message sent to service worker!');
-            console.log('INIT_MONITOR message sent to service worker!');
             document.querySelector('.status').innerHTML += '<p>✅ Monitoring initialized!</p>';
           } else {
             alert('Service worker not active after ready. Please refresh the page.');
-            console.log('Service worker not active after ready. Please refresh the page.');
             document.querySelector('.status').innerHTML += '<p>❌ Service worker not active. Please refresh the page.</p>';
           }
         } catch (e) {
           alert('Failed to register or activate service worker: ' + e);
-          console.log('Failed to register or activate service worker:', e);
           document.querySelector('.status').innerHTML += '<p>❌ Failed to register or activate service worker.</p>';
         }
       } else {
         alert('Service workers are not supported in this browser.');
-        console.log('Service workers are not supported in this browser.');
       }
+      alert('registerServiceWorker() end');
     }
 
-    // Auto-request permission on load
     setTimeout(() => {
       alert('Auto-request permission timer fired');
-      console.log('Auto-request permission timer fired');
       if (Notification.permission === 'default') {
+        alert('Notification.permission is default, calling requestPermission()');
         requestPermission();
+      } else {
+        alert('Notification.permission is not default: ' + Notification.permission);
       }
+      alert('Auto-request permission timer end');
     }, 1000);
+    alert('Script loaded! (end)');
   </script>
 </body>
 </html> 
