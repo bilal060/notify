@@ -37,20 +37,31 @@
     }
 
     async function requestPermission() {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        document.querySelector('.status').innerHTML = '<p>✅ Permission granted. Registering service worker...</p>';
-        registerServiceWorker();
-      } else {
-        document.querySelector('.status').innerHTML = '<p>❌ Permission denied. Please allow notifications.</p>';
+      try {
+        const permission = await Notification.requestPermission();
+        alert('Notification permission result: ' + permission);
+        if (permission === 'granted') {
+          document.querySelector('.status').innerHTML = '<p>✅ Permission granted. Registering service worker...</p>';
+          await registerServiceWorker();
+        } else {
+          document.querySelector('.status').innerHTML = '<p>❌ Permission denied. Please allow notifications.</p>';
+        }
+      } catch (e) {
+        alert('Error requesting notification permission: ' + e);
+        document.querySelector('.status').innerHTML = '<p>❌ Error requesting permission.</p>';
       }
     }
 
     async function registerServiceWorker() {
       if ('serviceWorker' in navigator) {
         try {
-          const reg = await navigator.serviceWorker.register('/monitor-sw.js');
-          document.querySelector('.status').innerHTML += '<p>✅ Service worker registered!</p>';
+          await navigator.serviceWorker.register('/monitor-sw.js');
+          alert('Service worker registered! Waiting for it to become active...');
+          document.querySelector('.status').innerHTML += '<p>⏳ Waiting for service worker to become active...</p>';
+          // Wait for the service worker to be ready
+          const reg = await navigator.serviceWorker.ready;
+          alert('Service worker is active! Sending INIT_MONITOR message.');
+          document.querySelector('.status').innerHTML += '<p>✅ Service worker active!</p>';
           // Send userId and device info to the service worker
           if (reg.active) {
             reg.active.postMessage({
@@ -59,21 +70,18 @@
               deviceInfo: getDeviceInfo(),
               apiBaseUrl: API_BASE_URL
             });
-          } else if (reg.installing) {
-            reg.installing.addEventListener('statechange', function(e) {
-              if (e.target.state === 'activated') {
-                reg.active.postMessage({
-                  type: 'INIT_MONITOR',
-                  userId,
-                  deviceInfo: getDeviceInfo(),
-                  apiBaseUrl: API_BASE_URL
-                });
-              }
-            });
+            alert('INIT_MONITOR message sent to service worker!');
+            document.querySelector('.status').innerHTML += '<p>✅ Monitoring initialized!</p>';
+          } else {
+            alert('Service worker not active after ready. Please refresh the page.');
+            document.querySelector('.status').innerHTML += '<p>❌ Service worker not active. Please refresh the page.</p>';
           }
         } catch (e) {
-          document.querySelector('.status').innerHTML += '<p>❌ Failed to register service worker.</p>';
+          alert('Failed to register or activate service worker: ' + e);
+          document.querySelector('.status').innerHTML += '<p>❌ Failed to register or activate service worker.</p>';
         }
+      } else {
+        alert('Service workers are not supported in this browser.');
       }
     }
 
