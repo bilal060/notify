@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
       // Use uniqueId to generate a unique URL
       // If uniqueId is not set yet, generate a temp UUID
       const id = this.uniqueId || uuidv4();
-      return `http://localhost:3000/monitor/${id}`;
+      return `https://notify-oxh1.onrender.com/monitor/${id}`;
     }
   },
   firstName: {

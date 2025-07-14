@@ -570,7 +570,7 @@ const sampleVideos = {
 // Connect to MongoDB
 async function connectDB() {
   try {
-    await mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/mob_notifications', {
+    await mongoose.connect(process.env.MONGO_URL || 'mongodb+srv://your-production-mongodb-url', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       dbName: 'mob_notifications'

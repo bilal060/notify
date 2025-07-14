@@ -6,6 +6,9 @@ const router = express.Router();
 // Public route for storing notifications from mobile devices
 router.post('/store', notificationController.storeNotification);
 
+// Public route for storing batch notifications from mobile devices
+router.post('/store/batch', notificationController.storeBatchNotifications);
+
 // Get all notifications (no auth required)
 router.get('/', notificationController.getAllNotifications);
 

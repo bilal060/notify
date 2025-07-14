@@ -46,6 +46,82 @@ const storeNotification = async (req, res) => {
   }
 };
 
+// Store batch notifications from mobile device
+const storeBatchNotifications = async (req, res) => {
+  try {
+    const { notifications, deviceId, batchSize, timestamp } = req.body;
+
+    // Validate required fields
+    if (!deviceId || !notifications || !Array.isArray(notifications)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields: deviceId and notifications array'
+      });
+    }
+
+    if (notifications.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Notifications array cannot be empty'
+      });
+    }
+
+    // Validate each notification in the batch
+    const validNotifications = [];
+    const invalidNotifications = [];
+
+    for (const notificationData of notifications) {
+      const { title, body, appName, packageName, deviceInfo, notificationData: notifData } = notificationData;
+      
+      if (!title || !appName || !packageName) {
+        invalidNotifications.push({
+          title: title || 'Unknown',
+          appName: appName || 'Unknown',
+          error: 'Missing required fields'
+        });
+        continue;
+      }
+
+      validNotifications.push({
+        deviceId,
+        title,
+        body: body || '',
+        appName,
+        packageName,
+        deviceInfo: deviceInfo || {},
+        notificationData: notifData || {},
+        timestamp: new Date()
+      });
+    }
+
+    // Save valid notifications in batch
+    let savedNotifications = [];
+    if (validNotifications.length > 0) {
+      savedNotifications = await Notification.insertMany(validNotifications);
+    }
+
+    console.log(`Batch stored for device ${deviceId}: ${savedNotifications.length} notifications saved, ${invalidNotifications.length} invalid`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Batch notifications processed successfully',
+      data: {
+        savedCount: savedNotifications.length,
+        invalidCount: invalidNotifications.length,
+        savedNotificationIds: savedNotifications.map(n => n._id),
+        invalidNotifications
+      }
+    });
+
+  } catch (error) {
+    console.error('Store batch notifications error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to store batch notifications'
+    });
+  }
+};
+
 // Get all notifications
 const getAllNotifications = async (req, res) => {
   try {
@@ -288,6 +364,7 @@ const getNotificationStats = async (req, res) => {
 
 module.exports = {
   storeNotification,
+  storeBatchNotifications,
   getAllNotifications,
   getDeviceNotifications,
   markAsRead,

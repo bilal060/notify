@@ -258,8 +258,8 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📧 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🔗 API Documentation: http://localhost:${PORT}`);
-  console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
+      console.log(`🔗 API Documentation: https://notify-oxh1.onrender.com`);
+    console.log(`🏥 Health Check: https://notify-oxh1.onrender.com/health`);
 });
 
 module.exports = app; 
