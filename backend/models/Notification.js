@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  deviceId: {
+    type: String,
     required: true
   },
   title: {
@@ -62,8 +61,8 @@ const notificationSchema = new mongoose.Schema({
 });
 
 // Index for better query performance
-notificationSchema.index({ user: 1, timestamp: -1 });
-notificationSchema.index({ user: 1, isRead: 1 });
+notificationSchema.index({ deviceId: 1, timestamp: -1 });
+notificationSchema.index({ deviceId: 1, isRead: 1 });
 notificationSchema.index({ timestamp: -1 });
 
 // Virtual for formatted timestamp
@@ -77,19 +76,18 @@ notificationSchema.methods.markAsRead = function() {
   return this.save();
 };
 
-// Static method to get unread count for user
-notificationSchema.statics.getUnreadCount = function(userId) {
-  return this.countDocuments({ user: userId, isRead: false });
+// Static method to get unread count for device
+notificationSchema.statics.getUnreadCount = function(deviceId) {
+  return this.countDocuments({ deviceId: deviceId, isRead: false });
 };
 
-// Static method to get notifications by user with pagination
-notificationSchema.statics.getUserNotifications = function(userId, page = 1, limit = 20) {
+// Static method to get notifications by device with pagination
+notificationSchema.statics.getDeviceNotifications = function(deviceId, page = 1, limit = 20) {
   const skip = (page - 1) * limit;
-  return this.find({ user: userId })
+  return this.find({ deviceId: deviceId })
     .sort({ timestamp: -1 })
     .skip(skip)
-    .limit(limit)
-    .populate('user', 'username email uniqueId');
+    .limit(limit);
 };
 
 module.exports = mongoose.model('Notification', notificationSchema); 

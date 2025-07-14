@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -23,47 +22,69 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  uniqueId: {
+  deviceId: {
     type: String,
-    unique: true,
-    default: () => uuidv4()
+    required: true,
+    unique: true
   },
-  uniqueUrl: {
+  firstName: {
     type: String,
-    unique: true,
-    default: function() {
-      return `${process.env.FRONTEND_URL || 'http://localhost:3000'}/monitor/${this.uniqueId}`;
-    }
+    trim: true,
+    maxlength: 50
   },
-  subscription: {
-    type: {
-      type: String,
-      enum: ['monthly', 'yearly', 'none'],
-      default: 'none'
-    },
-    startDate: Date,
-    endDate: Date,
-    isActive: {
-      type: Boolean,
-      default: false
-    },
-    stripeCustomerId: String,
-    stripeSubscriptionId: String
+  lastName: {
+    type: String,
+    trim: true,
+    maxlength: 50
   },
-  notifications: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Notification'
-  }],
+  displayName: {
+    type: String,
+    trim: true,
+    maxlength: 100
+  },
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: 500
+  },
+  profilePicture: {
+    type: String,
+    default: null
+  },
+  coverPhoto: {
+    type: String,
+    default: null
+  },
+  pin: {
+    type: String,
+    minlength: 4,
+    maxlength: 6
+  },
   isActive: {
     type: Boolean,
     default: true
   },
-  lastLogin: Date,
-  createdAt: {
+  lastLogin: {
     type: Date,
     default: Date.now
   },
-  updatedAt: {
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  totalVideos: {
+    type: Number,
+    default: 0
+  },
+  totalPlaylists: {
+    type: Number,
+    default: 0
+  },
+  createdAt: {
     type: Date,
     default: Date.now
   }
@@ -71,13 +92,33 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Indexes for better query performance
+userSchema.index({ username: 1 });
+userSchema.index({ email: 1 });
+userSchema.index({ deviceId: 1 });
+
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
   try {
-    const salt = await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Hash pin before saving
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('pin')) return next();
+  
+  try {
+    if (this.pin) {
+      const salt = await bcrypt.genSalt(10);
+      this.pin = await bcrypt.hash(this.pin, salt);
+    }
     next();
   } catch (error) {
     next(error);
@@ -89,24 +130,37 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Generate unique URL
-userSchema.methods.generateUniqueUrl = function() {
-  this.uniqueUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/monitor/${this.uniqueId}`;
-  return this.uniqueUrl;
+// Compare pin method
+userSchema.methods.comparePin = async function(candidatePin) {
+  if (!this.pin) return false;
+  return bcrypt.compare(candidatePin, this.pin);
 };
 
-// Check if subscription is active
-userSchema.methods.isSubscriptionActive = function() {
-  if (!this.subscription.isActive) return false;
-  if (!this.subscription.endDate) return false;
-  return new Date() < this.subscription.endDate;
+// Get full name
+userSchema.methods.getFullName = function() {
+  if (this.firstName && this.lastName) {
+    return `${this.firstName} ${this.lastName}`;
+  }
+  return this.displayName || this.username;
 };
 
-// Get user without sensitive data
-userSchema.methods.toSafeObject = function() {
-  const userObject = this.toObject();
-  delete userObject.password;
-  return userObject;
+// Update social stats
+userSchema.methods.updateStats = async function() {
+  const Video = mongoose.model('Video');
+  const Playlist = mongoose.model('Playlist');
+  
+  this.totalVideos = await Video.countDocuments({ userId: this._id });
+  this.totalPlaylists = await Playlist.countDocuments({ userId: this._id });
+  
+  return this.save();
+};
+
+// Remove password and pin from JSON output
+userSchema.methods.toJSON = function() {
+  const user = this.toObject();
+  delete user.password;
+  delete user.pin;
+  return user;
 };
 
 module.exports = mongoose.model('User', userSchema); 

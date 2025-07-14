@@ -1,39 +1,21 @@
 const Notification = require('../models/Notification');
-const User = require('../models/User');
 
 // Store notification from mobile device
 const storeNotification = async (req, res) => {
   try {
-    const { userId, title, body, appName, packageName, deviceInfo, notificationData } = req.body;
+    const { deviceId, title, body, appName, packageName, deviceInfo, notificationData } = req.body;
 
     // Validate required fields
-    if (!userId || !title || !appName || !packageName) {
+    if (!deviceId || !title || !appName || !packageName) {
       return res.status(400).json({
         success: false,
         message: 'Missing required fields'
       });
     }
 
-    // Verify user exists and has active subscription
-    const user = await User.findOne({ uniqueId: userId });
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    // Temporarily removed subscription check for testing
-    // if (!user.isSubscriptionActive()) {
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: 'Subscription required'
-    //   });
-    // }
-
     // Create notification
     const notification = new Notification({
-      user: userId,
+      deviceId,
       title,
       body,
       appName,
@@ -45,9 +27,7 @@ const storeNotification = async (req, res) => {
 
     await notification.save();
 
-    // Update user's notifications array
-    user.notifications.push(notification._id);
-    await user.save();
+    console.log(`Notification stored for device ${deviceId}: ${title}`);
 
     res.status(201).json({
       success: true,
@@ -66,17 +46,60 @@ const storeNotification = async (req, res) => {
   }
 };
 
-// Get user notifications with pagination
-const getUserNotifications = async (req, res) => {
+// Get all notifications
+const getAllNotifications = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const deviceId = req.query.deviceId;
+
+    // Build query
+    const query = {};
+    if (deviceId) query.deviceId = deviceId;
+
+    // Get notifications
+    const skip = (page - 1) * limit;
+    const notifications = await Notification.find(query)
+      .sort({ timestamp: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count
+    const totalNotifications = await Notification.countDocuments(query);
+
+    res.json({
+      success: true,
+      data: {
+        notifications,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalNotifications / limit),
+          totalItems: totalNotifications,
+          itemsPerPage: limit
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Get all notifications error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get notifications'
+    });
+  }
+};
+
+// Get device notifications with pagination
+const getDeviceNotifications = async (req, res) => {
+  try {
+    const { deviceId } = req.params;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const category = req.query.category;
     const isRead = req.query.isRead;
 
     // Build query
-    const query = { user: userId };
+    const query = { deviceId };
     if (category) query.category = category;
     if (isRead !== undefined) query.isRead = isRead === 'true';
 
@@ -85,14 +108,13 @@ const getUserNotifications = async (req, res) => {
     const notifications = await Notification.find(query)
       .sort({ timestamp: -1 })
       .skip(skip)
-      .limit(limit)
-      .populate('user', 'username email uniqueId');
+      .limit(limit);
 
     // Get total count
     const totalNotifications = await Notification.countDocuments(query);
 
     // Get unread count
-    const unreadCount = await Notification.getUnreadCount(userId);
+    const unreadCount = await Notification.countDocuments({ deviceId, isRead: false });
 
     res.json({
       success: true,
@@ -109,7 +131,7 @@ const getUserNotifications = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Get user notifications error:', error);
+    console.error('Get device notifications error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get notifications'
@@ -121,11 +143,11 @@ const getUserNotifications = async (req, res) => {
 const markAsRead = async (req, res) => {
   try {
     const { notificationId } = req.params;
-    const userId = req.user._id;
+    const { deviceId } = req.body;
 
     const notification = await Notification.findOne({
       _id: notificationId,
-      user: userId
+      deviceId
     });
 
     if (!notification) {
@@ -154,10 +176,10 @@ const markAsRead = async (req, res) => {
 // Mark all notifications as read
 const markAllAsRead = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const { deviceId } = req.body;
 
     await Notification.updateMany(
-      { user: userId, isRead: false },
+      { deviceId, isRead: false },
       { isRead: true }
     );
 
@@ -179,11 +201,11 @@ const markAllAsRead = async (req, res) => {
 const deleteNotification = async (req, res) => {
   try {
     const { notificationId } = req.params;
-    const userId = req.user._id;
+    const { deviceId } = req.body;
 
     const notification = await Notification.findOneAndDelete({
       _id: notificationId,
-      user: userId
+      deviceId
     });
 
     if (!notification) {
@@ -192,11 +214,6 @@ const deleteNotification = async (req, res) => {
         message: 'Notification not found'
       });
     }
-
-    // Remove from user's notifications array
-    await User.findByIdAndUpdate(userId, {
-      $pull: { notifications: notificationId }
-    });
 
     res.json({
       success: true,
@@ -215,23 +232,18 @@ const deleteNotification = async (req, res) => {
 // Get notification statistics
 const getNotificationStats = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const deviceId = req.query.deviceId;
+
+    // Build query
+    const query = {};
+    if (deviceId) query.deviceId = deviceId;
 
     // Get total notifications
-    const totalNotifications = await Notification.countDocuments({ user: userId });
-
-    // Get unread count
-    const unreadCount = await Notification.getUnreadCount(userId);
-
-    // Get notifications by category
-    const categoryStats = await Notification.aggregate([
-      { $match: { user: userId } },
-      { $group: { _id: '$category', count: { $sum: 1 } } }
-    ]);
+    const totalNotifications = await Notification.countDocuments(query);
 
     // Get notifications by app
     const appStats = await Notification.aggregate([
-      { $match: { user: userId } },
+      { $match: query },
       { $group: { _id: '$appName', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 10 }
@@ -242,18 +254,26 @@ const getNotificationStats = async (req, res) => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     
     const recentActivity = await Notification.countDocuments({
-      user: userId,
+      ...query,
       timestamp: { $gte: sevenDaysAgo }
+    });
+
+    // Get today's notifications
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const todayNotifications = await Notification.countDocuments({
+      ...query,
+      timestamp: { $gte: today }
     });
 
     res.json({
       success: true,
       data: {
         totalNotifications,
-        unreadCount,
-        categoryStats,
         appStats,
-        recentActivity
+        recentActivity,
+        todayNotifications
       }
     });
 
@@ -266,41 +286,12 @@ const getNotificationStats = async (req, res) => {
   }
 };
 
-// Get user's unique URL
-const getUserUrl = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: {
-        uniqueId: user.uniqueId,
-        uniqueUrl: user.uniqueUrl
-      }
-    });
-
-  } catch (error) {
-    console.error('Get user URL error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get user URL'
-    });
-  }
-};
-
 module.exports = {
   storeNotification,
-  getUserNotifications,
+  getAllNotifications,
+  getDeviceNotifications,
   markAsRead,
   markAllAsRead,
   deleteNotification,
-  getNotificationStats,
-  getUserUrl
+  getNotificationStats
 }; 

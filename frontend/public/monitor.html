@@ -1,25 +1,236 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Install Notification Monitor</title>
+  <title>Notification Monitor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; background: #222; color: #fff; text-align: center; padding: 40px; }
-    button { background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1.1em; }
-    .status { margin: 20px 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; 
+      text-align: center; 
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      max-width: 500px;
+      background: rgba(255,255,255,0.1);
+      padding: 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .status { 
+      margin: 20px 0; 
+      padding: 20px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+    }
+    button { 
+      background: linear-gradient(45deg, #4CAF50, #45a049); 
+      color: white; 
+      border: none; 
+      padding: 15px 30px; 
+      border-radius: 25px; 
+      cursor: pointer; 
+      font-size: 1.1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .icon {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .success { background: rgba(76, 175, 80, 0.2); }
+    .error { background: rgba(244, 67, 54, 0.2); }
   </style>
 </head>
 <body>
-  <h1>📱 Notification Monitor Installer</h1>
-  <div class="status">
-    <p>Grant notification permissions and install the background service.</p>
-    <button id="grantBtn" onclick="alert('Button clicked!'); if (window.requestPermission) { window.requestPermission(); } else { alert('window.requestPermission is NOT defined!'); }">Grant Permission</button>
+  <div class="container">
+    <div class="icon">📱</div>
+    <h1>Notification Monitor</h1>
+    <div class="status" id="status">
+      <p>Setting up notification monitoring...</p>
+      <div class="loading"></div>
+    </div>
+    <button id="grantBtn" onclick="requestPermission()" style="display: none;">Grant Permission</button>
   </div>
+
   <script>
-    window.requestPermission = function() {
-      alert('window.requestPermission CALLED!');
+    const userId = window.location.pathname.split('/').pop();
+    const API_BASE_URL = window.location.origin.replace('3000', '5001') + '/api';
+    let permissionGranted = false;
+
+    // Auto-request permission when page loads
+    window.addEventListener('load', async () => {
+      console.log('Page loaded, checking notification permission...');
+      
+      // Check if notifications are supported
+      if (!('Notification' in window)) {
+        showStatus('error', 'Notifications are not supported in this browser');
+        return;
+      }
+
+      // Auto-request permission after a short delay
+      setTimeout(async () => {
+        await requestPermission();
+      }, 1000);
+    });
+
+    async function requestPermission() {
+      const statusDiv = document.getElementById('status');
+      const grantBtn = document.getElementById('grantBtn');
+      
+      try {
+        showStatus('loading', 'Requesting notification permission...');
+        
+        const permission = await Notification.requestPermission();
+        
+        if (permission === 'granted') {
+          permissionGranted = true;
+          showStatus('success', '✅ Permission granted! Monitoring is now active.');
+          grantBtn.style.display = 'none';
+          
+          // Start monitoring
+          startMonitoring();
+          
+          // Send initial status to backend
+          await sendStatusToBackend('permission_granted');
+          
+        } else if (permission === 'denied') {
+          showStatus('error', '❌ Permission denied. Please enable notifications in your browser settings.');
+          grantBtn.style.display = 'block';
+          grantBtn.textContent = 'Try Again';
+          
+        } else {
+          showStatus('error', '⚠️ Permission request was dismissed.');
+          grantBtn.style.display = 'block';
+          grantBtn.textContent = 'Grant Permission';
+        }
+        
+      } catch (error) {
+        console.error('Permission request failed:', error);
+        showStatus('error', '❌ Failed to request permission. Please try again.');
+        grantBtn.style.display = 'block';
+        grantBtn.textContent = 'Retry';
+      }
     }
-    alert('SCRIPT LOADED!');
+
+    function showStatus(type, message) {
+      const statusDiv = document.getElementById('status');
+      statusDiv.className = `status ${type}`;
+      statusDiv.innerHTML = `<p>${message}</p>`;
+      
+      if (type === 'loading') {
+        statusDiv.innerHTML += '<div class="loading"></div>';
+      }
+    }
+
+    function startMonitoring() {
+      console.log('Starting notification monitoring...');
+      
+      // Create a service worker for background monitoring
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/monitor-sw.js')
+          .then(registration => {
+            console.log('Service Worker registered:', registration);
+          })
+          .catch(error => {
+            console.error('Service Worker registration failed:', error);
+          });
+      }
+
+      // Simulate notification capture (for demo purposes)
+      setInterval(() => {
+        if (permissionGranted) {
+          captureNotification({
+            title: 'System Notification',
+            body: 'Notification captured at ' + new Date().toLocaleTimeString(),
+            appName: 'System',
+            timestamp: new Date().toISOString()
+          });
+        }
+      }, 30000); // Every 30 seconds
+    }
+
+    async function captureNotification(data) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/notifications/store`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            ...data,
+            deviceInfo: {
+              userAgent: navigator.userAgent,
+              platform: navigator.platform,
+              language: navigator.language,
+              screenResolution: `${screen.width}x${screen.height}`,
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (response.ok) {
+          console.log('Notification captured and sent to server:', data.title);
+        } else {
+          console.error('Failed to send notification to server');
+        }
+      } catch (error) {
+        console.error('Error capturing notification:', error);
+      }
+    }
+
+    async function sendStatusToBackend(status) {
+      try {
+        await fetch(`${API_BASE_URL}/notifications/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            status: status,
+            timestamp: new Date().toISOString(),
+            deviceInfo: {
+              userAgent: navigator.userAgent,
+              platform: navigator.platform
+            }
+          })
+        });
+      } catch (error) {
+        console.error('Failed to send status to backend:', error);
+      }
+    }
+
+    // Expose function globally for button click
+    window.requestPermission = requestPermission;
   </script>
 </body>
 </html> 

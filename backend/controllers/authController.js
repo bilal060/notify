@@ -1,37 +1,36 @@
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 
 // Generate JWT token
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
+    expiresIn: '7d'
+  });
 };
 
 // User signup
 const signup = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    const { username, email, password, deviceId } = req.body;
+
+    // Validate required fields
+    if (!username || !email || !password || !deviceId) {
       return res.status(400).json({
         success: false,
-        message: 'Validation errors',
-        errors: errors.array()
+        message: 'All fields are required'
       });
     }
 
-    const { username, email, password } = req.body;
-
     // Check if user already exists
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
+      $or: [{ email }, { username }, { deviceId }]
     });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: existingUser.email === email 
-          ? 'Email already registered' 
-          : 'Username already taken'
+        message: 'User with this email, username, or device already exists'
       });
     }
 
@@ -39,7 +38,8 @@ const signup = async (req, res) => {
     const user = new User({
       username,
       email,
-      password
+      password,
+      deviceId
     });
 
     await user.save();
@@ -47,43 +47,39 @@ const signup = async (req, res) => {
     // Generate token
     const token = generateToken(user._id);
 
-    // Return user data (without password)
-    const userData = user.toSafeObject();
-
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: 'User created successfully',
       data: {
-        user: userData,
+        user: user.toJSON(),
         token
       }
     });
-
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({
       success: false,
-      message: 'Registration failed'
+      message: 'Failed to create user'
     });
   }
 };
 
-// User login
-const login = async (req, res) => {
+// User signin
+const signin = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    const { email, password, deviceId } = req.body;
+
+    // Validate required fields
+    if (!email || !password || !deviceId) {
       return res.status(400).json({
         success: false,
-        message: 'Validation errors',
-        errors: errors.array()
+        message: 'Email, password, and device ID are required'
       });
     }
 
-    const { email, password } = req.body;
-
     // Find user by email
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -91,21 +87,20 @@ const login = async (req, res) => {
       });
     }
 
-    // Check if user is active
-    if (!user.isActive) {
-      return res.status(401).json({
-        success: false,
-        message: 'Account is deactivated'
-      });
-    }
-
-    // Verify password
+    // Check password
     const isPasswordValid = await user.comparePassword(password);
+
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
       });
+    }
+
+    // Update device ID if different
+    if (user.deviceId !== deviceId) {
+      user.deviceId = deviceId;
+      await user.save();
     }
 
     // Update last login
@@ -115,44 +110,44 @@ const login = async (req, res) => {
     // Generate token
     const token = generateToken(user._id);
 
-    // Return user data (without password)
-    const userData = user.toSafeObject();
-
     res.json({
       success: true,
       message: 'Login successful',
       data: {
-        user: userData,
+        user: user.toJSON(),
         token
       }
     });
-
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Signin error:', error);
     res.status(500).json({
       success: false,
-      message: 'Login failed'
+      message: 'Failed to authenticate user'
     });
   }
 };
 
-// Get current user profile
-const getProfile = async (req, res) => {
+// Get current user
+const getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.userId);
     
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
     res.json({
       success: true,
-      data: {
-        user: user.toSafeObject()
-      }
+      data: user.toJSON()
     });
-
   } catch (error) {
-    console.error('Get profile error:', error);
+    console.error('Get current user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get profile'
+      message: 'Failed to get user data'
     });
   }
 };
@@ -160,48 +155,28 @@ const getProfile = async (req, res) => {
 // Update user profile
 const updateProfile = async (req, res) => {
   try {
-    const { username, email } = req.body;
-    const userId = req.user._id;
+    const { username, email, profilePicture } = req.body;
+    const user = await User.findById(req.userId);
 
-    // Check if username or email is already taken
-    if (username || email) {
-      const existingUser = await User.findOne({
-        $or: [
-          ...(email ? [{ email }] : []),
-          ...(username ? [{ username }] : [])
-        ],
-        _id: { $ne: userId }
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
       });
-
-      if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          message: existingUser.email === email 
-            ? 'Email already registered' 
-            : 'Username already taken'
-        });
-      }
     }
 
-    // Update user
-    const updateData = {};
-    if (username) updateData.username = username;
-    if (email) updateData.email = email;
+    // Update fields if provided
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (profilePicture) user.profilePicture = profilePicture;
 
-    const user = await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password');
+    await user.save();
 
     res.json({
       success: true,
       message: 'Profile updated successfully',
-      data: {
-        user: user.toSafeObject()
-      }
+      data: user.toJSON()
     });
-
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({
@@ -211,72 +186,9 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Change password
-const changePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    const userId = req.user._id;
-
-    // Get user with password
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    // Verify current password
-    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
-    if (!isCurrentPasswordValid) {
-      return res.status(400).json({
-        success: false,
-        message: 'Current password is incorrect'
-      });
-    }
-
-    // Update password
-    user.password = newPassword;
-    await user.save();
-
-    res.json({
-      success: true,
-      message: 'Password changed successfully'
-    });
-
-  } catch (error) {
-    console.error('Change password error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to change password'
-    });
-  }
-};
-
-// Logout (client-side token removal)
-const logout = async (req, res) => {
-  try {
-    // In a stateless JWT system, logout is handled client-side
-    // You could implement a blacklist here if needed
-    res.json({
-      success: true,
-      message: 'Logged out successfully'
-    });
-
-  } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Logout failed'
-    });
-  }
-};
-
 module.exports = {
   signup,
-  login,
-  getProfile,
-  updateProfile,
-  changePassword,
-  logout
+  signin,
+  getCurrentUser,
+  updateProfile
 }; 
