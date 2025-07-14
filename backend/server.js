@@ -28,11 +28,12 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: false
 }));
+// CORS configuration for mobile app compatibility
 app.use(cors({
-  origin: true, // Allow all origins for mobile app
-  credentials: true,
+  origin: '*', // Allow all origins for mobile app
+  credentials: false, // Set to false when origin is *
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 app.use(morgan('combined'));
 app.use(express.json({ limit: '50mb' }));
