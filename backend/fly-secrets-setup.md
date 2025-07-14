@@ -51,4 +51,25 @@ flyctl secrets set NODE_ENV="production"
 
 ## Your API will be available at:
 - **Production URL:** https://notification-backend.fly.dev
-- **Health Check:** https://notification-backend.fly.dev/api/health 
+- **Health Check:** https://notification-backend.fly.dev/api/health
+- **Keep-Alive:** https://notification-backend.fly.dev/api/keep-alive
+
+## 🚀 Keep-Alive Configuration
+
+Your server is configured to **never sleep** with these settings:
+- `auto_stop_machines = false` - Prevents automatic shutdown
+- `min_machines_running = 1` - Always keeps at least 1 machine running
+- Built-in keep-alive endpoint at `/api/keep-alive`
+
+### Optional: Run Keep-Alive Script Locally
+To ensure maximum uptime, you can run the keep-alive script locally:
+
+```bash
+# Set your server URL
+export SERVER_URL="https://notification-backend.fly.dev"
+
+# Run the keep-alive script
+node backend/keep-alive.js
+```
+
+This will ping your server every 4 minutes to keep it active. 
