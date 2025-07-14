@@ -1,6 +1,6 @@
 // Service Worker for Notification Monitoring
 const CACHE_NAME = 'notification-monitor-v1';
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = 'https://notify-oxh1.onrender.com/api';
 
 // Install event
 self.addEventListener('install', (event) => {

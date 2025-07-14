@@ -19,6 +19,7 @@ const commentRoutes = require('./routes/comments');
 const likeRoutes = require('./routes/likes');
 const playlistRoutes = require('./routes/playlists');
 const chatRoutes = require('./routes/chat');
+const gmailRoutes = require('./routes/gmail');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -80,6 +81,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/likes', likeRoutes);
 app.use('/api/playlists', playlistRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/gmail', gmailRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
