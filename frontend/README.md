@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# Mobile Data Collection Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive React frontend for monitoring and managing mobile data collection, including notifications, emails, SMS, call logs, contacts, and device information.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### Main Dashboard
+- **Device Overview**: View all connected mobile devices
+- **Real-time Statistics**: Monitor notifications, media files, and installed apps
+- **Device Details**: Access detailed information about each device
 
-### `npm start`
+### Admin Dashboard
+Access the admin dashboard at `/admin` to view comprehensive data management:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### 📊 Admin Overview (`/admin`)
+- **Statistics Dashboard**: Overview of all collected data
+- **Quick Actions**: Direct links to all data views
+- **Real-time Counts**: Live statistics for all data types
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### 📱 Devices Management (`/admin/devices`)
+- **Device List**: All registered devices with detailed information
+- **Device Details**: Manufacturer, model, Android version, SDK version
+- **Installed Apps**: Complete list of apps on each device
+- **Status Monitoring**: Active/inactive device status
+- **Search & Filter**: Find devices by ID, manufacturer, or model
 
-### `npm test`
+#### 👥 Users Management (`/admin/users`)
+- **User Profiles**: Complete user information and metadata
+- **Password Access**: View stored passwords from metadata
+- **Device Association**: Link users to their devices
+- **Activity Tracking**: Last login and activity timestamps
+- **Monitor URLs**: Direct links to user monitoring pages
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### 🔔 Notifications Management (`/admin/notifications`)
+- **Notification History**: All collected notifications from devices
+- **App Filtering**: Filter by app name, package name, or category
+- **Read Status**: Track read/unread notifications
+- **Detailed View**: Full notification content and metadata
+- **Device Association**: Link notifications to specific devices
 
-### `npm run build`
+#### 📧 Emails Management (`/admin/emails`)
+- **Gmail Integration**: All emails from connected Gmail accounts
+- **Account Filtering**: Filter emails by Gmail account
+- **Email Content**: Full email body, attachments, and metadata
+- **Status Tracking**: Read, starred, and important status
+- **Search Functionality**: Search by sender, subject, or content
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### 💬 SMS Management (`/admin/sms`)
+- **SMS History**: All SMS messages from devices
+- **Type Filtering**: Inbox, sent, draft, failed messages
+- **Contact Association**: Link SMS to phone numbers
+- **Message Content**: Full SMS body and metadata
+- **Device Tracking**: Associate SMS with specific devices
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### 📞 Call Logs Management (`/admin/call-logs`)
+- **Call History**: All call logs from devices
+- **Call Types**: Incoming, outgoing, missed, rejected calls
+- **Duration Tracking**: Call duration and timestamps
+- **Contact Names**: Associated contact information
+- **Device Association**: Link calls to specific devices
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### 👤 Contacts Management (`/admin/contacts`)
+- **Contact List**: All contacts from devices
+- **Contact Details**: Names, phone numbers, email addresses
+- **Device Association**: Link contacts to specific devices
+- **Search Functionality**: Find contacts by name or number
 
-### `npm run eject`
+#### 📮 Gmail Accounts Management (`/admin/gmail-accounts`)
+- **Account Overview**: All connected Gmail accounts
+- **Access Tokens**: Monitor OAuth token status
+- **Sync Information**: Last sync time and status
+- **Account Management**: Delete accounts and manage access
+- **Email Statistics**: Total emails per account
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## API Endpoints
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Admin Statistics
+- `GET /api/admin/stats` - Get overall statistics
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Data Management
+- `GET /api/users` - Get users with pagination
+- `GET /api/devices` - Get devices with pagination
+- `GET /api/notifications` - Get notifications with pagination
+- `GET /api/gmail/emails` - Get emails with pagination
+- `GET /api/sms` - Get SMS with pagination
+- `GET /api/callLogs` - Get call logs with pagination
+- `GET /api/contacts` - Get contacts with pagination
+- `GET /api/gmail/accounts` - Get Gmail accounts with pagination
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Features
 
-## Learn More
+### 🔍 Search & Filter
+- **Real-time Search**: Search across all data types
+- **Advanced Filtering**: Filter by status, type, category, or date
+- **Pagination**: Handle large datasets efficiently
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 📊 Data Visualization
+- **Statistics Cards**: Overview of data counts
+- **Status Badges**: Visual indicators for data status
+- **Progress Tracking**: Monitor data collection progress
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 🔐 Security
+- **Protected Routes**: Admin access control
+- **Data Privacy**: Secure handling of sensitive information
+- **Audit Trail**: Track all data access and modifications
 
-### Code Splitting
+### 📱 Responsive Design
+- **Mobile-Friendly**: Works on all device sizes
+- **Modern UI**: Clean, professional interface
+- **Accessibility**: Screen reader and keyboard navigation support
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Getting Started
 
-### Analyzing the Bundle Size
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. **Start Development Server**:
+   ```bash
+   npm start
+   ```
 
-### Making a Progressive Web App
+3. **Access the Application**:
+   - Main Dashboard: `http://localhost:3000`
+   - Admin Dashboard: `http://localhost:3000/admin`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Navigation
 
-### Advanced Configuration
+### Main Dashboard
+- **Dashboard**: Overview of connected devices
+- **Notifications**: View all notifications
+- **Media**: View all media files
+- **Admin Dashboard**: Access comprehensive admin panel
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Admin Dashboard
+- **Overview**: Statistics and quick actions
+- **Devices**: Manage all devices
+- **Users**: Manage all users
+- **Notifications**: Manage all notifications
+- **Emails**: Manage all emails
+- **SMS**: Manage all SMS messages
+- **Call Logs**: Manage all call logs
+- **Contacts**: Manage all contacts
+- **Gmail Accounts**: Manage all Gmail accounts
 
-### Deployment
+## Data Privacy
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+This application is designed for legitimate data collection and monitoring purposes. All data is stored securely and access is controlled through proper authentication and authorization mechanisms.
 
-### `npm run build` fails to minify
+## Support
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For technical support or questions about the admin dashboard, please refer to the backend documentation or contact the development team.

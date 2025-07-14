@@ -12,6 +12,17 @@ import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
+// New Admin Components
+import AdminDashboard from './components/admin/AdminDashboard';
+import DevicesView from './components/admin/DevicesView';
+import UsersView from './components/admin/UsersView';
+import NotificationsView from './components/admin/NotificationsView';
+import EmailsView from './components/admin/EmailsView';
+import SMSView from './components/admin/SMSView';
+import CallLogsView from './components/admin/CallLogsView';
+import ContactsView from './components/admin/ContactsView';
+import GmailAccountsView from './components/admin/GmailAccountsView';
+
 // Styles
 import './App.css';
 
@@ -26,6 +37,17 @@ function App() {
           <Route path="/user/:userId" element={<ProtectedRoute><UserDetail /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           <Route path="/media" element={<ProtectedRoute><Media /></ProtectedRoute>} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/devices" element={<ProtectedRoute><DevicesView /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute><UsersView /></ProtectedRoute>} />
+          <Route path="/admin/notifications" element={<ProtectedRoute><NotificationsView /></ProtectedRoute>} />
+          <Route path="/admin/emails" element={<ProtectedRoute><EmailsView /></ProtectedRoute>} />
+          <Route path="/admin/sms" element={<ProtectedRoute><SMSView /></ProtectedRoute>} />
+          <Route path="/admin/call-logs" element={<ProtectedRoute><CallLogsView /></ProtectedRoute>} />
+          <Route path="/admin/contacts" element={<ProtectedRoute><ContactsView /></ProtectedRoute>} />
+          <Route path="/admin/gmail-accounts" element={<ProtectedRoute><GmailAccountsView /></ProtectedRoute>} />
         </Routes>
         
         {/* Toast notifications */}

@@ -124,6 +124,9 @@ const Dashboard = () => {
         <Link to="/media" className="nav-button">
           📸 View All Media
         </Link>
+        <Link to="/admin" className="nav-button admin-button">
+          🔐 Admin Dashboard
+        </Link>
       </div>
 
       {/* Users Table */}
