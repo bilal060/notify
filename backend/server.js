@@ -45,8 +45,27 @@ mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
   dbName: 'mob_notifications'
 })
-.then(() => console.log('✅ MongoDB connected successfully to mob_notifications database'))
-.catch(err => console.log('❌ MongoDB connection error:', err));
+.then(() => {
+  console.log('✅ MongoDB connected successfully to mob_notifications database');
+  console.log('🔗 Database URL:', process.env.MONGO_URL?.replace(/\/\/[^:]+:[^@]+@/, '//***:***@'));
+})
+.catch(err => {
+  console.log('❌ MongoDB connection error:', err.message);
+  process.exit(1);
+});
+
+// Test database connection
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️ MongoDB disconnected');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('✅ MongoDB reconnected');
+});
 
 // Routes
 app.use('/api/auth', authRoutes);

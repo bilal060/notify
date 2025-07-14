@@ -3,6 +3,21 @@ const notificationController = require('../controllers/notificationController');
 
 const router = express.Router();
 
+// Test endpoint to verify notification system
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Notification system is working',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      store: 'POST /api/notifications/store',
+      batch: 'POST /api/notifications/store/batch',
+      getAll: 'GET /api/notifications',
+      device: 'GET /api/notifications/device/:deviceId'
+    }
+  });
+});
+
 // Public route for storing notifications from mobile devices
 router.post('/store', notificationController.storeNotification);
 

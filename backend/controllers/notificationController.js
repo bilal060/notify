@@ -3,13 +3,16 @@ const Notification = require('../models/Notification');
 // Store notification from mobile device
 const storeNotification = async (req, res) => {
   try {
+    console.log('📱 Received notification request:', JSON.stringify(req.body, null, 2));
+    
     const { deviceId, title, body, appName, packageName, deviceInfo, notificationData } = req.body;
 
     // Validate required fields
     if (!deviceId || !title || !appName || !packageName) {
+      console.log('❌ Missing required fields:', { deviceId: !!deviceId, title: !!title, appName: !!appName, packageName: !!packageName });
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields'
+        message: 'Missing required fields: deviceId, title, appName, packageName'
       });
     }
 
@@ -17,7 +20,7 @@ const storeNotification = async (req, res) => {
     const notification = new Notification({
       deviceId,
       title,
-      body,
+      body: body || '',
       appName,
       packageName,
       deviceInfo: deviceInfo || {},
@@ -27,7 +30,7 @@ const storeNotification = async (req, res) => {
 
     await notification.save();
 
-    console.log(`Notification stored for device ${deviceId}: ${title}`);
+    console.log(`✅ Notification stored for device ${deviceId}: ${title} (ID: ${notification._id})`);
 
     res.status(201).json({
       success: true,
@@ -38,10 +41,11 @@ const storeNotification = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Store notification error:', error);
+    console.error('❌ Store notification error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to store notification'
+      message: 'Failed to store notification',
+      error: error.message
     });
   }
 };
