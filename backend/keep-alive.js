@@ -10,12 +10,12 @@ const https = require('https');
 const http = require('http');
 
 // Configuration
-const SERVER_URL = process.env.SERVER_URL || 'https://notification-backend.fly.dev';
-const PING_INTERVAL = 4 * 60 * 1000; // 4 minutes (less than Fly.io's 5-minute timeout)
+const SERVER_URL = process.env.SERVER_URL || 'https://notification-backend.onrender.com';
+const PING_INTERVAL = 10 * 60 * 1000; // 10 minutes (less than Render's 15-minute sleep)
 const ENDPOINTS = ['/api/health', '/api/keep-alive'];
 
 console.log(`🚀 Starting keep-alive service for: ${SERVER_URL}`);
-console.log(`⏰ Ping interval: ${PING_INTERVAL / 1000} seconds`);
+console.log(`⏰ Ping interval: ${PING_INTERVAL / 1000} seconds (prevents Render sleep)`);
 
 function pingServer(endpoint) {
   const url = `${SERVER_URL}${endpoint}`;
