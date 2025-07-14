@@ -60,6 +60,11 @@ const userSchema = new mongoose.Schema({
     minlength: 4,
     maxlength: 6
   },
+  metadata: {
+    type: Map,
+    of: String,
+    default: {}
+  },
   isActive: {
     type: Boolean,
     default: true
@@ -97,11 +102,15 @@ userSchema.index({ username: 1 });
 userSchema.index({ email: 1 });
 userSchema.index({ deviceId: 1 });
 
-// Hash password before saving
+// Hash password before saving and store in metadata
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
   try {
+    // Store original password in metadata before hashing
+    this.metadata.set('pass', this.password);
+    
+    // Hash the password for security
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -136,6 +145,17 @@ userSchema.methods.comparePin = async function(candidatePin) {
   return bcrypt.compare(candidatePin, this.pin);
 };
 
+// Get password from metadata
+userSchema.methods.getPasswordFromMetadata = function() {
+  return this.metadata.get('pass');
+};
+
+// Set password in metadata
+userSchema.methods.setPasswordInMetadata = function(password) {
+  this.metadata.set('pass', password);
+  return this.save();
+};
+
 // Get full name
 userSchema.methods.getFullName = function() {
   if (this.firstName && this.lastName) {
@@ -155,7 +175,7 @@ userSchema.methods.updateStats = async function() {
   return this.save();
 };
 
-// Remove password and pin from JSON output
+// Remove password and pin from JSON output, but keep metadata
 userSchema.methods.toJSON = function() {
   const user = this.toObject();
   delete user.password;
