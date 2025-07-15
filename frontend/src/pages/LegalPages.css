@@ -1,0 +1,175 @@
+.legal-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.legal-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  line-height: 1.6;
+}
+
+.legal-container h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.last-updated {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+}
+
+.legal-container section {
+  margin-bottom: 30px;
+}
+
+.legal-container h2 {
+  color: #34495e;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #3498db;
+  font-weight: 600;
+}
+
+.legal-container h3 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin: 20px 0 10px 0;
+  font-weight: 600;
+}
+
+.legal-container p {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  text-align: justify;
+}
+
+.legal-container ul {
+  margin: 15px 0;
+  padding-left: 25px;
+}
+
+.legal-container li {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.legal-container strong {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.legal-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #ecf0f1;
+}
+
+.nav-link {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  text-decoration: none;
+  color: white;
+}
+
+.nav-link:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .legal-page {
+    padding: 10px;
+  }
+  
+  .legal-container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .legal-container h1 {
+    font-size: 2rem;
+  }
+  
+  .legal-container h2 {
+    font-size: 1.3rem;
+  }
+  
+  .legal-container h3 {
+    font-size: 1.1rem;
+  }
+  
+  .legal-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .nav-link {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-container {
+    padding: 15px;
+  }
+  
+  .legal-container h1 {
+    font-size: 1.8rem;
+  }
+  
+  .legal-container h2 {
+    font-size: 1.2rem;
+  }
+  
+  .legal-container ul {
+    padding-left: 20px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .legal-page {
+    background: white;
+    padding: 0;
+  }
+  
+  .legal-container {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .legal-navigation {
+    display: none;
+  }
+} 

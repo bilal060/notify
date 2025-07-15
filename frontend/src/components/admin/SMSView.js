@@ -35,9 +35,9 @@ const SMSView = () => {
   };
 
   const filteredSMS = smsMessages.filter(sms =>
-    sm.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sm.body.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sm.deviceId.toLowerCase().includes(searchTerm.toLowerCase())
+    sms.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sms.body.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sms.deviceId.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString) => {

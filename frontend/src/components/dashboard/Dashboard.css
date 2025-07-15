@@ -279,3 +279,37 @@
     margin-bottom: 15px;
   }
 } 
+
+.dashboard-footer {
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid #e1e5e9;
+  text-align: center;
+}
+
+.footer-links {
+  margin-bottom: 10px;
+}
+
+.footer-link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.footer-separator {
+  color: #bdc3c7;
+  margin: 0 10px;
+  font-size: 0.9rem;
+}
+
+.footer-copyright {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+} 

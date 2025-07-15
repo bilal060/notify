@@ -1,0 +1,55 @@
+.login-footer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.footer-links {
+  margin-bottom: 10px;
+}
+
+.footer-link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.footer-separator {
+  color: #bdc3c7;
+  margin: 0 8px;
+  font-size: 0.85rem;
+}
+
+.login-divider {
+  position: relative;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.login-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e1e5e9;
+}
+
+.login-divider span {
+  background: white;
+  padding: 0 15px;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+.google-signin-wrapper {
+  margin-top: 20px;
+} 

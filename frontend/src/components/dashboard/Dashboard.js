@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Dashboard.css';
@@ -12,12 +12,7 @@ const Dashboard = () => {
     totalMedia: 0
   });
 
-  useEffect(() => {
-    fetchUsers();
-    fetchStats();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch('/api/users');
       const data = await response.json();
@@ -33,9 +28,9 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const [notificationsRes, mediaRes] = await Promise.all([
         fetch('/api/notifications/stats'),
@@ -46,16 +41,28 @@ const Dashboard = () => {
       const mediaData = await mediaRes.json();
       
       if (notificationsData.success && mediaData.success) {
-        setStats({
-          totalUsers: users.length,
+        setStats(prevStats => ({
+          ...prevStats,
           totalNotifications: notificationsData.data.totalNotifications,
           totalMedia: mediaData.data.totalMedia
-        });
+        }));
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+    fetchStats();
+  }, [fetchUsers, fetchStats]);
+
+  useEffect(() => {
+    setStats(prevStats => ({
+      ...prevStats,
+      totalUsers: users.length
+    }));
+  }, [users.length]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
@@ -196,6 +203,17 @@ const Dashboard = () => {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="dashboard-footer">
+        <div className="footer-links">
+          <Link to="/privacy" className="footer-link">Privacy Policy</Link>
+          <span className="footer-separator">|</span>
+          <Link to="/terms" className="footer-link">Terms of Service</Link>
+        </div>
+        <div className="footer-copyright">
+          © 2024 Your Company. All rights reserved.
+        </div>
       </div>
     </div>
   );
