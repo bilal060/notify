@@ -15,8 +15,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Generate a device ID for admin web access
-      const deviceId = `admin-web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Generate a device ID for web access
+      const deviceId = `web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const data = await api.post('/api/auth/signin', {
         email,
@@ -25,22 +25,18 @@ const Login = () => {
       });
 
       if (data.success) {
-        // Check if user is admin
-        if (!data.data.user.isAdmin && data.data.user.role !== 'admin') {
-          toast.error('Access denied. Admin privileges required.');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          return;
-        }
-
         // Store token in localStorage
         localStorage.setItem('token', data.data.token);
         localStorage.setItem('user', JSON.stringify(data.data.user));
         
-        toast.success('Admin login successful! Fetching emails...');
+        toast.success('Login successful!');
         
-        // Navigate to admin dashboard
-        navigate('/admin');
+        // Navigate to dashboard based on user role
+        if (data.data.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         toast.error(data.message || 'Login failed');
       }
@@ -56,14 +52,14 @@ const Login = () => {
     try {
       // Handle Google Sign-In success
       if (result.success) {
-        // Check if user is admin
-        if (result.user.role !== 'admin') {
-          toast.error('Access denied. Admin privileges required.');
-          return;
-        }
-
         toast.success('Google Sign-In successful!');
-        navigate('/admin');
+        
+        // Navigate based on user role
+        if (result.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       console.error('Google Sign-In error:', error);
@@ -76,15 +72,15 @@ const Login = () => {
       maxWidth: '400px',
       margin: '50px auto',
       padding: '30px',
-      border: '2px solid #e74c3c',
+      border: '2px solid #667eea',
       borderRadius: '10px',
       backgroundColor: '#fff',
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
     }}>
       <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h2 style={{ color: '#e74c3c', marginBottom: '10px' }}>🔐 Admin Access Only</h2>
+        <h2 style={{ color: '#667eea', marginBottom: '10px' }}>🔐 Welcome Back</h2>
         <p style={{ color: '#666', fontSize: '14px' }}>
-          This dashboard is restricted to authorized administrators only.
+          Sign in to access your dashboard and manage your data.
         </p>
         <p style={{ color: '#999', fontSize: '12px', marginTop: '10px' }}>
           Environment: {process.env.REACT_APP_ENV || 'development'}
@@ -149,7 +145,7 @@ const Login = () => {
           {showGoogleSignIn && (
             <div className="google-signin-wrapper">
               <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', marginBottom: '15px' }}>
-                Google Sign-In is available for admin users only.
+                Google Sign-In is available for all users.
               </p>
               <div style={{ 
                 padding: '20px', 
@@ -184,8 +180,8 @@ const Login = () => {
         fontSize: '12px',
         color: '#666'
       }}>
-        <strong>⚠️ Security Notice:</strong> This system is for authorized personnel only. 
-        All access attempts are logged and monitored.
+        <strong>ℹ️ Information:</strong> This system helps you manage your data and monitor your devices. 
+        All access is logged for security purposes.
       </div>
     </div>
   );
