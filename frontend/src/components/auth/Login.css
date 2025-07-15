@@ -50,6 +50,20 @@
   z-index: 1;
 }
 
-.google-signin-wrapper {
+.google-signin-section {
   margin-top: 20px;
+}
+
+.google-toggle-btn {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+}
+
+.google-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
+}
+
+.google-signin-wrapper {
+  margin-top: 15px;
 } 

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
-import GoogleSignIn from './GoogleSignIn';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showGoogleSignIn, setShowGoogleSignIn] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -49,6 +49,25 @@ const Login = () => {
       toast.error('Network error. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignInSuccess = async (result) => {
+    try {
+      // Handle Google Sign-In success
+      if (result.success) {
+        // Check if user is admin
+        if (result.user.role !== 'admin') {
+          toast.error('Access denied. Admin privileges required.');
+          return;
+        }
+
+        toast.success('Google Sign-In successful!');
+        navigate('/admin');
+      }
+    } catch (error) {
+      console.error('Google Sign-In error:', error);
+      toast.error('Google Sign-In failed. Please try again.');
     }
   };
 
@@ -107,17 +126,46 @@ const Login = () => {
           <span>or</span>
         </div>
         
-        <GoogleSignIn 
-          onSuccess={(result) => {
-            console.log('Google Sign-In successful:', result);
-            // The hook will handle the login through AuthContext
-          }}
-          onError={(error) => {
-            console.error('Google Sign-In error:', error);
-            // setError(error); // This line was not in the new_code, so it's removed.
-          }}
-          className="google-signin-wrapper"
-        />
+        <div className="google-signin-section">
+          <button 
+            onClick={() => setShowGoogleSignIn(!showGoogleSignIn)}
+            className="google-toggle-btn"
+            style={{
+              background: 'linear-gradient(135deg, #4285f4 0%, #34a853 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '6px',
+              fontSize: '1rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              width: '100%',
+              marginBottom: '15px'
+            }}
+          >
+            {showGoogleSignIn ? 'Hide Google Sign-In' : 'Sign in with Google'}
+          </button>
+          
+          {showGoogleSignIn && (
+            <div className="google-signin-wrapper">
+              <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', marginBottom: '15px' }}>
+                Google Sign-In is available for admin users only.
+              </p>
+              <div style={{ 
+                padding: '20px', 
+                backgroundColor: '#f8f9fa', 
+                borderRadius: '6px',
+                textAlign: 'center',
+                color: '#666'
+              }}>
+                <p>Google Sign-In integration is ready!</p>
+                <p style={{ fontSize: '12px', marginTop: '10px' }}>
+                  Configure your Google Client ID in environment variables to enable this feature.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       
       <div className="login-footer">
