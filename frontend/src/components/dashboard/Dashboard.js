@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import apiService from '../../services/apiService';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -15,8 +16,7 @@ const Dashboard = () => {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch('/api/devices');
-      const data = await response.json();
+      const data = await apiService.getDevices();
       
       if (data.success) {
         setUsers(data.data);
@@ -33,8 +33,7 @@ const Dashboard = () => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/stats');
-      const data = await response.json();
+      const data = await apiService.getAdminStats();
       
       if (data) {
         setStats({

@@ -76,6 +76,10 @@ const apiService = {
     return this.request('/api/dashboard/stats');
   },
 
+  async getAdminStats() {
+    return this.request('/api/admin/stats');
+  },
+
   async getNotifications(page = 1, limit = 50) {
     return this.request(`/api/notifications?page=${page}&limit=${limit}`);
   },
