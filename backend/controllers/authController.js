@@ -277,12 +277,17 @@ const googleSignIn = async (req, res) => {
 
     if (!user) {
       // Create new user with Google data
+      const randomPassword = Math.random().toString(36).substr(2, 15);
+      const username = email.split('@')[0] + '_' + Math.random().toString(36).substr(2, 5);
+      
       user = new User({
+        username: username,
         email,
-        name,
+        password: randomPassword, // This will be hashed by the pre-save middleware
+        deviceId: 'google_' + googleId, // Use googleId as deviceId for Google users
+        displayName: name, // Use displayName instead of name
         googleId,
         profilePicture: picture,
-        isEmailVerified: true,
         loginMethod: 'google',
         lastLogin: new Date(),
         isActive: true
@@ -294,9 +299,8 @@ const googleSignIn = async (req, res) => {
     } else {
       // Update existing user's Google info
       user.googleId = googleId;
-      user.name = name || user.name;
+      user.displayName = name || user.displayName; // Use displayName instead of name
       user.profilePicture = picture || user.profilePicture;
-      user.isEmailVerified = true;
       user.loginMethod = 'google';
       user.lastLogin = new Date();
       user.isActive = true;
@@ -325,10 +329,9 @@ const googleSignIn = async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        name: user.name,
+        name: user.displayName, // Use displayName for the response
         role: user.role,
         profilePicture: user.profilePicture,
-        isEmailVerified: user.isEmailVerified,
         loginMethod: user.loginMethod
       }
     });
