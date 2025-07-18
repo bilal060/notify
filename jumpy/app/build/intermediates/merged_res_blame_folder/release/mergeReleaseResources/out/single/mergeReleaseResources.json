@@ -1,0 +1,382 @@
+[
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_message_bubble_sent.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/message_bubble_sent.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/menu_bottom_navigation_menu.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/menu/bottom_navigation_menu.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_ludo.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_ludo.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_message_bubble_received.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/message_bubble_received.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_chess_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/chess_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_4.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_4.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_fragment_home.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_social_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/social_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_conversations_header.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/conversations_header.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_person_item_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/person_item_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_form_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/form_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_quick_action_button.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/quick_action_button.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_profile.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_profile.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_tab_unselected.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/tab_unselected.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_discord_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/discord_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_quick_actions_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/quick_actions_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_person.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_person.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_chat.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_chat.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_channel.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_channel.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_main.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_chess.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_chess.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_circle_button_primary.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/circle_button_primary.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_circle_button.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/circle_button.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_item_conversation.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/item_conversation.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_games_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/games_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_1.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_1.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_tab_selected.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/tab_selected.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_online_indicator.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/online_indicator.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_back.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_back.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_categories_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/categories_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_fragment_profile.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_input_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/input_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_discord_server_header.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/discord_server_header.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_conversations_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/conversations_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_unread_badge.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/unread_badge.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_dialog_add_contact.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/dialog_add_contact.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_dialog_change_password.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/dialog_change_password.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_uno.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_uno.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_tic_tac_toe_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/tic_tac_toe_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_video_player.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_video_player.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_signin.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_signin.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_home.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_home.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_card_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/card_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_search.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_search.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_chat_gradient_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/chat_gradient_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/xml_accessibility_service_config.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/xml/accessibility_service_config.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/xml_unified_accessibility_config.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/xml/unified_accessibility_config.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_button_primary.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/button_primary.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_item_message.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/item_message.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_info_card_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/info_card_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_game_cell_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/game_cell_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_avatar_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/avatar_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_videos_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/videos_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_search_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/search_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_signup.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_signup.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_5.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_5.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_discord_sidebar.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/discord_sidebar.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_header_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/header_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_scores_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/scores_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_arrow_back.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_arrow_back.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_fragment_search.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/fragment_search.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_add.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_add.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_uno_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/uno_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ludo_gradient.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ludo_gradient.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_2.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_2.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_duration_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/duration_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_button_secondary.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/button_secondary.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_item_video.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/item_video.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_upload_video.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_upload_video.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_video_placeholder.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/video_placeholder.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_circle_button_white.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/circle_button_white.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_board_border.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/board_border.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_video.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_video.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_games.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_games.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_dialog_edit_profile.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/dialog_edit_profile.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_logo_circle.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/logo_circle.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_chat.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_chat.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_6.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_6.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_dice_3.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/dice_3.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/layout_activity_tic_tac_toe.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/layout/activity_tic_tac_toe.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_group.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_group.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_arrow_right.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_arrow_right.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_gradient_background.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/gradient_background.xml"
+    },
+    {
+        "merged": "com.jumpy.videoplayerapp-release-63:/drawable_ic_notification.xml.flat",
+        "source": "com.jumpy.videoplayerapp-main-64:/drawable/ic_notification.xml"
+    }
+]

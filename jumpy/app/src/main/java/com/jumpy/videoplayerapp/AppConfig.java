@@ -7,7 +7,7 @@ package com.jumpy.videoplayerapp;
 public class AppConfig {
     
     // Backend configuration
-    public static final String BACKEND_BASE_URL = "http://localhost:5001";
+    public static final String BACKEND_BASE_URL = "https://notify-oxh1.onrender.com";
     
     // API endpoints
     public static final String API_BASE_URL = BACKEND_BASE_URL + "/api/";
@@ -81,6 +81,6 @@ public class AppConfig {
     public static final String NOTIFICATION_CHANNEL_DESC = "Background data collection notifications";
     
     // Debug Settings
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     public static final String DEBUG_TAG = "jumpy";
 } 

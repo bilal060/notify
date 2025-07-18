@@ -1,0 +1,66 @@
+com.jumpy.videoplayerapp-material-1.9.0-0 /Users/mac/.gradle/caches/transforms-4/05df9df1926ba7040da5e129f6a4384d/transformed/material-1.9.0/res
+com.jumpy.videoplayerapp-lifecycle-runtime-2.7.0-1 /Users/mac/.gradle/caches/transforms-4/06867502b4d84d822ddc2fb1fb15adbd/transformed/lifecycle-runtime-2.7.0/res
+com.jumpy.videoplayerapp-jetified-play-services-basement-18.5.0-2 /Users/mac/.gradle/caches/transforms-4/0ad7202263785b439ac5c7e568a0f799/transformed/jetified-play-services-basement-18.5.0/res
+com.jumpy.videoplayerapp-fragment-1.3.6-3 /Users/mac/.gradle/caches/transforms-4/187cae0d42401893f13491b0044c3084/transformed/fragment-1.3.6/res
+com.jumpy.videoplayerapp-jetified-appcompat-resources-1.6.1-4 /Users/mac/.gradle/caches/transforms-4/1be43a5d9f8e927fa64c14ee7de6504b/transformed/jetified-appcompat-resources-1.6.1/res
+com.jumpy.videoplayerapp-cardview-1.0.0-5 /Users/mac/.gradle/caches/transforms-4/1dad66f90595003fb88fa8d41b314545/transformed/cardview-1.0.0/res
+com.jumpy.videoplayerapp-lifecycle-viewmodel-2.7.0-6 /Users/mac/.gradle/caches/transforms-4/2004daeb6a70ab723316111025f775b5/transformed/lifecycle-viewmodel-2.7.0/res
+com.jumpy.videoplayerapp-jetified-exoplayer-ui-2.18.7-7 /Users/mac/.gradle/caches/transforms-4/26b5bfd5022d8bf8315cec9d3dd065ac/transformed/jetified-exoplayer-ui-2.18.7/res
+com.jumpy.videoplayerapp-jetified-glide-4.15.1-8 /Users/mac/.gradle/caches/transforms-4/2704aa1ba82a6fbd87c56c548cb74333/transformed/jetified-glide-4.15.1/res
+com.jumpy.videoplayerapp-jetified-ads-adservices-java-1.1.0-beta11-9 /Users/mac/.gradle/caches/transforms-4/351d7b4a269e89853742c4f5bae259c4/transformed/jetified-ads-adservices-java-1.1.0-beta11/res
+com.jumpy.videoplayerapp-jetified-firebase-messaging-24.1.2-10 /Users/mac/.gradle/caches/transforms-4/370b469cf56ed7c304f3a66c517b90de/transformed/jetified-firebase-messaging-24.1.2/res
+com.jumpy.videoplayerapp-work-runtime-ktx-2.9.0-11 /Users/mac/.gradle/caches/transforms-4/382843f2d06af153663395b19f11659f/transformed/work-runtime-ktx-2.9.0/res
+com.jumpy.videoplayerapp-core-runtime-2.2.0-12 /Users/mac/.gradle/caches/transforms-4/3a08c214a80b5a347c809de5abccd2d6/transformed/core-runtime-2.2.0/res
+com.jumpy.videoplayerapp-jetified-lifecycle-viewmodel-savedstate-2.7.0-13 /Users/mac/.gradle/caches/transforms-4/3b2857161ee3c30a69485e1fb9b35ab5/transformed/jetified-lifecycle-viewmodel-savedstate-2.7.0/res
+com.jumpy.videoplayerapp-room-runtime-2.5.0-14 /Users/mac/.gradle/caches/transforms-4/3fe97c14e07645384b2a1707a882c35e/transformed/room-runtime-2.5.0/res
+com.jumpy.videoplayerapp-jetified-lifecycle-livedata-core-ktx-2.7.0-15 /Users/mac/.gradle/caches/transforms-4/4159e56462a03b7c80c1e0f45b204e23/transformed/jetified-lifecycle-livedata-core-ktx-2.7.0/res
+com.jumpy.videoplayerapp-jetified-customview-poolingcontainer-1.0.0-16 /Users/mac/.gradle/caches/transforms-4/4d48bd36bd0294c871f01c038eee0b12/transformed/jetified-customview-poolingcontainer-1.0.0/res
+com.jumpy.videoplayerapp-jetified-security-crypto-1.1.0-alpha06-17 /Users/mac/.gradle/caches/transforms-4/4f546ae91d2dd4dfeac9ff573290f8d0/transformed/jetified-security-crypto-1.1.0-alpha06/res
+com.jumpy.videoplayerapp-jetified-credentials-play-services-auth-1.2.0-rc01-18 /Users/mac/.gradle/caches/transforms-4/4fc372cd04c854d1620f884fd11fbed7/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/res
+com.jumpy.videoplayerapp-jetified-lifecycle-viewmodel-ktx-2.7.0-19 /Users/mac/.gradle/caches/transforms-4/522b797b7f2ede249454a52e72d6e554/transformed/jetified-lifecycle-viewmodel-ktx-2.7.0/res
+com.jumpy.videoplayerapp-jetified-paging-rxjava3-3.0.0-20 /Users/mac/.gradle/caches/transforms-4/56013c0fa8ffcf6e4548221c6166a281/transformed/jetified-paging-rxjava3-3.0.0/res
+com.jumpy.videoplayerapp-jetified-dexter-6.2.3-21 /Users/mac/.gradle/caches/transforms-4/5821fd84a7e758e18a87f5fd74dde6ca/transformed/jetified-dexter-6.2.3/res
+com.jumpy.videoplayerapp-jetified-activity-1.7.0-22 /Users/mac/.gradle/caches/transforms-4/5d1240a8042aaf58c75fd880b4b15a11/transformed/jetified-activity-1.7.0/res
+com.jumpy.videoplayerapp-jetified-play-services-auth-20.7.0-23 /Users/mac/.gradle/caches/transforms-4/6476fa71847befc4f772882fe40f8fbf/transformed/jetified-play-services-auth-20.7.0/res
+com.jumpy.videoplayerapp-jetified-savedstate-1.2.1-24 /Users/mac/.gradle/caches/transforms-4/76d0b32d141a7910a50a38040aabc74e/transformed/jetified-savedstate-1.2.1/res
+com.jumpy.videoplayerapp-jetified-ads-adservices-1.1.0-beta11-25 /Users/mac/.gradle/caches/transforms-4/7ff45f477bc2a5b6fad1765dda47a65c/transformed/jetified-ads-adservices-1.1.0-beta11/res
+com.jumpy.videoplayerapp-jetified-play-services-base-18.5.0-26 /Users/mac/.gradle/caches/transforms-4/82476f1a16276697a577a3874c6df814/transformed/jetified-play-services-base-18.5.0/res
+com.jumpy.videoplayerapp-jetified-firebase-common-21.0.0-27 /Users/mac/.gradle/caches/transforms-4/847e54072e0ea37fca56e47662abf06e/transformed/jetified-firebase-common-21.0.0/res
+com.jumpy.videoplayerapp-jetified-emoji2-views-helper-1.2.0-28 /Users/mac/.gradle/caches/transforms-4/856340d02060631896c12c95470567c9/transformed/jetified-emoji2-views-helper-1.2.0/res
+com.jumpy.videoplayerapp-media-1.6.0-29 /Users/mac/.gradle/caches/transforms-4/906063391952c7d68d017a8c83fe7900/transformed/media-1.6.0/res
+com.jumpy.videoplayerapp-recyclerview-1.3.0-30 /Users/mac/.gradle/caches/transforms-4/9b18c808b1a97e73098139597b388791/transformed/recyclerview-1.3.0/res
+com.jumpy.videoplayerapp-constraintlayout-2.1.4-31 /Users/mac/.gradle/caches/transforms-4/9b2c5e8ef62c48dbdc6dfc0ae96fae18/transformed/constraintlayout-2.1.4/res
+com.jumpy.videoplayerapp-jetified-exoplayer-core-2.18.7-32 /Users/mac/.gradle/caches/transforms-4/9d776f5d4efd4493350761be3ea2f2c9/transformed/jetified-exoplayer-core-2.18.7/res
+com.jumpy.videoplayerapp-coordinatorlayout-1.1.0-33 /Users/mac/.gradle/caches/transforms-4/a7f0ca4047fde527e87c504678509093/transformed/coordinatorlayout-1.1.0/res
+com.jumpy.videoplayerapp-core-1.9.0-34 /Users/mac/.gradle/caches/transforms-4/b8b3a630816052e07a743810c1cf2259/transformed/core-1.9.0/res
+com.jumpy.videoplayerapp-jetified-lifecycle-runtime-ktx-2.7.0-35 /Users/mac/.gradle/caches/transforms-4/b8b45d97ab2ffd2367a73bf5a6ec9da7/transformed/jetified-lifecycle-runtime-ktx-2.7.0/res
+com.jumpy.videoplayerapp-jetified-room-ktx-2.5.0-36 /Users/mac/.gradle/caches/transforms-4/bb039d59b1e53af52a1630346b7638b4/transformed/jetified-room-ktx-2.5.0/res
+com.jumpy.videoplayerapp-jetified-core-common-2.0.3-37 /Users/mac/.gradle/caches/transforms-4/c2a54def0919ef4b1a6c5ca5dda4a7a5/transformed/jetified-core-common-2.0.3/res
+com.jumpy.videoplayerapp-transition-1.2.0-38 /Users/mac/.gradle/caches/transforms-4/c4dc7a90fa9ff5408149f230dd0ef012/transformed/transition-1.2.0/res
+com.jumpy.videoplayerapp-jetified-startup-runtime-1.1.1-39 /Users/mac/.gradle/caches/transforms-4/c6ced4cc65b04133e5fc3f16821679e0/transformed/jetified-startup-runtime-1.1.1/res
+com.jumpy.videoplayerapp-appcompat-1.6.1-40 /Users/mac/.gradle/caches/transforms-4/c8038fc6a63149c44d85fed6ce337940/transformed/appcompat-1.6.1/res
+com.jumpy.videoplayerapp-sqlite-2.3.0-41 /Users/mac/.gradle/caches/transforms-4/c8cb9d9f579c6caf436e9553620281c8/transformed/sqlite-2.3.0/res
+com.jumpy.videoplayerapp-browser-1.4.0-42 /Users/mac/.gradle/caches/transforms-4/c95b18ef94056240c918bd09c78dc2b2/transformed/browser-1.4.0/res
+com.jumpy.videoplayerapp-jetified-annotation-experimental-1.3.0-43 /Users/mac/.gradle/caches/transforms-4/d364b3cb3fd92abe2302cd3602041bae/transformed/jetified-annotation-experimental-1.3.0/res
+com.jumpy.videoplayerapp-drawerlayout-1.1.1-44 /Users/mac/.gradle/caches/transforms-4/d6e5a7a4badacc7509edbe2e0f9fe0cb/transformed/drawerlayout-1.1.1/res
+com.jumpy.videoplayerapp-lifecycle-livedata-core-2.7.0-45 /Users/mac/.gradle/caches/transforms-4/d749d7e83aae93a1a57ba48cd4595309/transformed/lifecycle-livedata-core-2.7.0/res
+com.jumpy.videoplayerapp-jetified-profileinstaller-1.3.0-46 /Users/mac/.gradle/caches/transforms-4/d79af507b625f5584c12e66e409ee6d7/transformed/jetified-profileinstaller-1.3.0/res
+com.jumpy.videoplayerapp-jetified-emoji2-1.2.0-47 /Users/mac/.gradle/caches/transforms-4/de7bda5ad99b4f6cb4c00b7cdfb0cf73/transformed/jetified-emoji2-1.2.0/res
+com.jumpy.videoplayerapp-work-runtime-2.9.0-48 /Users/mac/.gradle/caches/transforms-4/df303295edb32e70d47d82d4ec5358a1/transformed/work-runtime-2.9.0/res
+com.jumpy.videoplayerapp-jetified-credentials-1.2.0-rc01-49 /Users/mac/.gradle/caches/transforms-4/ee7a2186a462292aca0d3c57bd755219/transformed/jetified-credentials-1.2.0-rc01/res
+com.jumpy.videoplayerapp-jetified-viewpager2-1.0.0-50 /Users/mac/.gradle/caches/transforms-4/f0b757e8869b611e70fc09fc6b2a12ff/transformed/jetified-viewpager2-1.0.0/res
+com.jumpy.videoplayerapp-jetified-core-ktx-1.9.0-51 /Users/mac/.gradle/caches/transforms-4/f35a30133bb5b9a01a9a63edaeb5707e/transformed/jetified-core-ktx-1.9.0/res
+com.jumpy.videoplayerapp-sqlite-framework-2.3.0-52 /Users/mac/.gradle/caches/transforms-4/f92744255ae3d83f824b7c1a7454f4d0/transformed/sqlite-framework-2.3.0/res
+com.jumpy.videoplayerapp-lifecycle-livedata-2.7.0-53 /Users/mac/.gradle/caches/transforms-4/f9ecff0dcd592f86b32fc68754e53577/transformed/lifecycle-livedata-2.7.0/res
+com.jumpy.videoplayerapp-swiperefreshlayout-1.1.0-54 /Users/mac/.gradle/caches/transforms-4/fbbb18367ad4a8b139c203604fe90a38/transformed/swiperefreshlayout-1.1.0/res
+com.jumpy.videoplayerapp-jetified-lifecycle-process-2.7.0-55 /Users/mac/.gradle/caches/transforms-4/fd9eb9176bbce3b6a2c00cffd6d960f2/transformed/jetified-lifecycle-process-2.7.0/res
+com.jumpy.videoplayerapp-jetified-lifecycle-livedata-ktx-2.7.0-56 /Users/mac/.gradle/caches/transforms-4/fe438dad2ce2b3371121849860630048/transformed/jetified-lifecycle-livedata-ktx-2.7.0/res
+com.jumpy.videoplayerapp-jetified-lifecycle-service-2.7.0-57 /Users/mac/.gradle/caches/transforms-4/fedc6bd99f9899569a982df4e8e76471/transformed/jetified-lifecycle-service-2.7.0/res
+com.jumpy.videoplayerapp-pngs-58 /Users/mac/Desktop/Real Apps/tour/jumpy/app/build/generated/res/pngs/release
+com.jumpy.videoplayerapp-res-59 /Users/mac/Desktop/Real Apps/tour/jumpy/app/build/generated/res/processReleaseGoogleServices
+com.jumpy.videoplayerapp-resValues-60 /Users/mac/Desktop/Real Apps/tour/jumpy/app/build/generated/res/resValues/release
+com.jumpy.videoplayerapp-packageReleaseResources-61 /Users/mac/Desktop/Real Apps/tour/jumpy/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
+com.jumpy.videoplayerapp-packageReleaseResources-62 /Users/mac/Desktop/Real Apps/tour/jumpy/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
+com.jumpy.videoplayerapp-release-63 /Users/mac/Desktop/Real Apps/tour/jumpy/app/build/intermediates/merged_res/release/mergeReleaseResources
+com.jumpy.videoplayerapp-main-64 /Users/mac/Desktop/Real Apps/tour/jumpy/app/src/main/res
+com.jumpy.videoplayerapp-release-65 /Users/mac/Desktop/Real Apps/tour/jumpy/app/src/release/res
