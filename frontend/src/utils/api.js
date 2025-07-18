@@ -5,8 +5,8 @@ const getApiBaseUrl = () => {
     return process.env.REACT_APP_API_BASE_URL;
   }
   
-  // Development: Use localhost:5000
-  return 'http://localhost:5000';
+  // Development: Use localhost:5001
+  return 'http://localhost:5001';
 };
 
 const API_BASE_URL = getApiBaseUrl();
