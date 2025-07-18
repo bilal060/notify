@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- Dice background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <corners android:radius="8dp" />
+            <stroke android:width="2dp" android:color="@android:color/black" />
+        </shape>
+    </item>
+    
+    <!-- Top-left dot -->
+    <item android:gravity="top|left" android:left="16dp" android:top="16dp">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/black" />
+            <size android:width="12dp" android:height="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Bottom-right dot -->
+    <item android:gravity="bottom|right" android:right="16dp" android:bottom="16dp">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/black" />
+            <size android:width="12dp" android:height="12dp" />
+        </shape>
+    </item>
+    
+</layer-list> 

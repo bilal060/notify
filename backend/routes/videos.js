@@ -41,6 +41,7 @@ const upload = multer({
 
 // Public routes
 router.get('/', videoController.getVideos); // Get all videos with pagination
+router.get('/categories', videoController.getCategories); // Get all available categories
 router.get('/search', videoController.searchVideos); // Search videos with pagination
 router.get('/category/:category', videoController.getVideosByCategory); // Get videos by category with pagination
 router.get('/:id', videoController.getVideo); // Get single video

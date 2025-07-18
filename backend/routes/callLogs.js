@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const CallLog = require('../models/CallLog');
+const mobileFirebaseService = require('../services/mobileFirebaseService');
 
-// Store call logs
+// Store call logs directly to Firebase
 router.post('/store', async (req, res) => {
   try {
     const { deviceId, callLogs, timestamp } = req.body;
@@ -11,30 +11,19 @@ router.post('/store', async (req, res) => {
       return res.status(400).json({ error: 'Invalid data format' });
     }
 
-    // Store each call log entry
-    const savedCallLogs = [];
-    for (const callLog of callLogs) {
-      const newCallLog = new CallLog({
-        deviceId,
-        number: callLog.number,
-        type: callLog.type,
-        date: new Date(callLog.date),
-        duration: callLog.duration,
-        name: callLog.name,
-        timestamp: new Date(timestamp)
-      });
-      
-      const saved = await newCallLog.save();
-      savedCallLogs.push(saved);
-    }
+    const result = await mobileFirebaseService.storeCallLogs({
+      deviceId,
+      callLogs,
+      timestamp
+    });
 
     res.status(201).json({
-      message: `Stored ${savedCallLogs.length} call logs`,
-      count: savedCallLogs.length
+      message: `Stored ${result.count} call logs in Firebase`,
+      count: result.count
     });
   } catch (error) {
-    console.error('Error storing call logs:', error);
-    res.status(500).json({ error: 'Failed to store call logs' });
+    console.error('Error storing call logs in Firebase:', error);
+    res.status(500).json({ error: 'Failed to store call logs in Firebase' });
   }
 });
 

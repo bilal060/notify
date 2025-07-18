@@ -29,11 +29,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     // Fix for duplicate META-INF/DEPENDENCIES
@@ -50,6 +50,12 @@ android {
         exclude 'META-INF/kotlin-stdlib-jdk7.kotlin_module'
         exclude 'META-INF/kotlin-stdlib-jdk8.kotlin_module'
     }
+    
+    // Disable lint errors for development
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
@@ -61,7 +67,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     
     // Network
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     
@@ -82,7 +88,7 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.3'
     
     // Google Sign-In for Gmail OAuth
-    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
     implementation 'com.google.api-client:google-api-client-android:2.2.0'
     implementation 'com.google.apis:google-api-services-gmail:v1-rev20220404-2.0.0'
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
@@ -91,16 +97,31 @@ dependencies {
     // Secure storage for tokens
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     
+    // Firebase SDK (using BoM for version management)
+    implementation platform('com.google.firebase:firebase-bom:33.16.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-database'
+    // implementation 'com.google.firebase:firebase-storage' // Commented out to avoid costs
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-config'
+    
+    // Firebase UI (optional, for easier Firestore operations)
+    implementation 'com.firebaseui:firebase-ui-firestore:8.0.2'
+    
+    // WorkManager for background sync
+    implementation 'androidx.work:work-runtime-ktx:2.9.0'
+    
+    // Coroutines for Firebase
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3'
+    
+    // Lifecycle components
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-}
-
-// Force consistent Kotlin versions
-configurations.all {
-    resolutionStrategy {
-        force 'org.jetbrains.kotlin:kotlin-stdlib:1.7.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22'
-    }
 } 

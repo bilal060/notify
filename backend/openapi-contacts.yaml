@@ -1,0 +1,468 @@
+openapi: 3.0.3
+info:
+  title: Dubai Tourism Contacts API
+  description: API for managing contacts data in the Dubai Tourism application
+  version: 1.0.0
+  contact:
+    name: Dubai Tourism API Support
+    email: api@dubaitourism.com
+
+servers:
+  - url: http://localhost:5001
+    description: Development server
+  - url: https://api.dubaitourism.com
+    description: Production server
+
+paths:
+  /api/contacts/store:
+    post:
+      summary: Store contacts data
+      description: Store contacts from a device to Firebase
+      tags:
+        - Contacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deviceId
+                - contacts
+                - timestamp
+              properties:
+                deviceId:
+                  type: string
+                  description: Unique identifier for the device
+                  example: "device_12345"
+                contacts:
+                  type: array
+                  description: Array of contact objects
+                  items:
+                    type: object
+                    properties:
+                      contactId:
+                        type: string
+                        description: Unique contact identifier
+                      name:
+                        type: string
+                        description: Contact name
+                      hasPhone:
+                        type: boolean
+                        description: Whether contact has phone numbers
+                      phoneNumbers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            number:
+                              type: string
+                              description: Phone number
+                            type:
+                              type: string
+                              enum: [home, mobile, work, other, unknown]
+                              description: Type of phone number
+                  example:
+                    - contactId: "contact_1"
+                      name: "John Doe"
+                      hasPhone: true
+                      phoneNumbers:
+                        - number: "+971501234567"
+                          type: "mobile"
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: Timestamp when contacts were collected
+                  example: "2024-01-15T10:30:00Z"
+      responses:
+        '201':
+          description: Contacts stored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Stored 150 contacts in Firebase"
+                  count:
+                    type: integer
+                    example: 150
+        '400':
+          description: Invalid data format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid data format"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to store contacts in Firebase"
+
+  /api/contacts/device/{deviceId}:
+    get:
+      summary: Get contacts for a device
+      description: Retrieve contacts for a specific device with pagination
+      tags:
+        - Contacts
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Device identifier
+          example: "device_12345"
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 1000
+          description: Number of contacts per page
+      responses:
+        '200':
+          description: Contacts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      contacts:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Contact'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to fetch contacts"
+
+    delete:
+      summary: Delete contacts for a specific device
+      description: Delete all contacts for a specific device (requires confirmation)
+      tags:
+        - Contacts
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Device identifier
+          example: "device_12345"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - confirm
+              properties:
+                confirm:
+                  type: string
+                  enum: ["true"]
+                  description: Confirmation required to delete contacts
+                  example: "true"
+      responses:
+        '200':
+          description: Contacts deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successfully deleted 150 contacts for device device_12345"
+                  deletedCount:
+                    type: integer
+                    example: 150
+                  deviceId:
+                    type: string
+                    example: "device_12345"
+        '400':
+          description: Confirmation required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Confirmation required. Set confirm to \"true\" to delete contacts for this device."
+        '404':
+          description: No contacts found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No contacts found for device device_12345"
+                  deletedCount:
+                    type: integer
+                    example: 0
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to delete contacts for device"
+
+  /api/contacts/stats:
+    get:
+      summary: Get contacts statistics
+      description: Retrieve statistics about contacts stored in the system
+      tags:
+        - Contacts
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      totalContacts:
+                        type: integer
+                        description: Total number of contacts
+                        example: 15000
+                      uniqueDevices:
+                        type: integer
+                        description: Number of unique devices
+                        example: 500
+                      contactsWithPhone:
+                        type: integer
+                        description: Number of contacts with phone numbers
+                        example: 12000
+                      contactsWithoutPhone:
+                        type: integer
+                        description: Number of contacts without phone numbers
+                        example: 3000
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to fetch contacts statistics"
+
+  /api/contacts/all:
+    delete:
+      summary: Delete all contacts
+      description: Delete all contacts from the system or for a specific device (requires confirmation)
+      tags:
+        - Contacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - confirm
+              properties:
+                confirm:
+                  type: string
+                  enum: ["true"]
+                  description: Confirmation required to delete all contacts
+                  example: "true"
+                deviceId:
+                  type: string
+                  description: Optional device ID to delete contacts for specific device only
+                  example: "device_12345"
+      responses:
+        '200':
+          description: Contacts deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successfully deleted 15000 contacts"
+                  deletedCount:
+                    type: integer
+                    example: 15000
+                  deviceId:
+                    type: string
+                    example: "all devices"
+        '400':
+          description: Confirmation required
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Confirmation required. Set confirm to \"true\" to delete all contacts."
+        '404':
+          description: No contacts found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No contacts found to delete"
+                  deletedCount:
+                    type: integer
+                    example: 0
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to delete contacts"
+
+components:
+  schemas:
+    Contact:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          description: Device identifier
+          example: "device_12345"
+        contactId:
+          type: string
+          description: Unique contact identifier
+          example: "contact_1"
+        name:
+          type: string
+          description: Contact name
+          example: "John Doe"
+        hasPhone:
+          type: boolean
+          description: Whether contact has phone numbers
+          example: true
+        phoneNumbers:
+          type: array
+          items:
+            type: object
+            properties:
+              number:
+                type: string
+                description: Phone number
+                example: "+971501234567"
+              type:
+                type: string
+                enum: [home, mobile, work, other, unknown]
+                description: Type of phone number
+                example: "mobile"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the contact was stored
+          example: "2024-01-15T10:30:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          description: When the record was created
+          example: "2024-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the record was last updated
+          example: "2024-01-15T10:30:00Z"
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        limit:
+          type: integer
+          description: Number of items per page
+          example: 100
+        totalCount:
+          type: integer
+          description: Total number of items
+          example: 1500
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 15
+        hasNext:
+          type: boolean
+          description: Whether there is a next page
+          example: true
+        hasPrev:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Contacts
+    description: Operations for managing contacts data 

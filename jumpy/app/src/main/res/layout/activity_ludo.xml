@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/ludo_gradient"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🎲 Ludo King"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Status Text -->
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player 1's turn"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Dice Section -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="32dp">
+
+        <ImageView
+            android:id="@+id/dice_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/dice_1"
+            android:background="@drawable/dice_background"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/roll_dice_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Roll Dice"
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:background="@drawable/button_primary"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- Player Scores -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/scores_background"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player Positions"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/player1_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player 1: 0"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/player2_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player 2: 0"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/player3_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player 3: 0"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/player4_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player 4: 0"
+            android:textSize="14sp"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- Reset Button -->
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Game"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:background="@drawable/button_secondary"
+        android:textColor="@android:color/white" />
+
+</LinearLayout> 

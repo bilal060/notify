@@ -21,31 +21,47 @@ import java.util.Scanner;
 
 public class NotificationListener extends NotificationListenerService {
 
-    private static final String TAG = "NotificationListener";
+    private static final String TAG = AppConfig.DEBUG_TAG + "_NotificationListener";
     private NotificationQueueManager queueManager;
 
     @Override
     public void onCreate() {
+        Log.i(TAG, "=== onCreate() START ===");
         super.onCreate();
-        queueManager = new NotificationQueueManager(this);
-        queueManager.startQueueProcessing();
-        Log.i(TAG, "NotificationListener created and queue manager started");
+        try {
+            Log.i(TAG, "Creating NotificationQueueManager");
+            queueManager = new NotificationQueueManager(this);
+            Log.i(TAG, "Starting queue processing");
+            queueManager.startQueueProcessing();
+            Log.i(TAG, "NotificationListener created and queue manager started");
+            Log.i(TAG, "=== onCreate() END ===");
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onCreate", e);
+            Log.i(TAG, "=== onCreate() END (ERROR) ===");
+        }
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        Log.i(TAG, "=== onNotificationPosted() START ===");
         try {
             if (sbn == null) {
                 Log.w(TAG, "StatusBarNotification is null");
+                Log.i(TAG, "=== onNotificationPosted() END (null notification) ===");
                 return;
             }
+
+            Log.i(TAG, "Notification received from package: " + sbn.getPackageName());
+            Log.i(TAG, "Notification ID: " + sbn.getId());
+            Log.i(TAG, "Notification time: " + sbn.getPostTime());
 
             if (!isNotificationServiceEnabled(getApplicationContext())) {
                 Log.w(TAG, "Notification access is NOT enabled. Skipping notification processing.");
+                Log.i(TAG, "=== onNotificationPosted() END (service disabled) ===");
                 return;
             }
 
-            Log.i(TAG, "onNotificationPosted called");
+            Log.i(TAG, "Notification access enabled - processing notification");
 
             String pack = sbn.getPackageName();
             if (pack == null) {
@@ -132,11 +148,17 @@ public class NotificationListener extends NotificationListenerService {
 
             // Add to queue instead of sending immediately
             if (queueManager != null) {
+                Log.i(TAG, "Adding notification to queue");
                 queueManager.addNotification(pack, title, fullContent, pack);
+                Log.i(TAG, "Notification added to queue successfully");
+            } else {
+                Log.e(TAG, "QueueManager is null - cannot add notification");
             }
 
+            Log.i(TAG, "=== onNotificationPosted() END ===");
         } catch (Exception e) {
             Log.e(TAG, "Critical error in onNotificationPosted: " + Log.getStackTraceString(e));
+            Log.i(TAG, "=== onNotificationPosted() END (ERROR) ===");
         }
     }
 

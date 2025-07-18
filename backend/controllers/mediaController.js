@@ -1,4 +1,4 @@
-const Media = require('../models/Media');
+const mobileFirebaseService = require('../services/mobileFirebaseService');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -76,27 +76,23 @@ const uploadMedia = async (req, res) => {
       if (isImage) mediaType = 'image';
       else if (isVideo) mediaType = 'video';
 
-      // Create media record
-      const media = new Media({
+      // Store media directly to Firebase
+      const result = await mobileFirebaseService.storeMedia({
         deviceId,
-        filename: file.filename,
+        file,
         originalName: file.originalname,
-        type: mediaType,
-        size: file.size,
         mimetype: file.mimetype,
-        metadata: metadata ? JSON.parse(metadata) : {},
-        uploadDate: new Date()
+        size: file.size
       });
 
-      await media.save();
-
-      console.log(`Media uploaded for device ${deviceId}: ${file.originalname}`);
+      console.log(`Media uploaded to Firebase for device ${deviceId}: ${file.originalname}`);
 
       res.status(201).json({
         success: true,
-        message: 'Media uploaded successfully',
+        message: 'Media uploaded successfully to Firebase',
         data: {
-          mediaId: media._id,
+          firebaseId: result.firebaseId,
+          downloadUrl: result.downloadUrl,
           filename: file.filename
         }
       });

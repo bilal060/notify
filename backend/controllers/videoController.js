@@ -98,6 +98,20 @@ const getVideosByCategory = async (req, res) => {
   }
 };
 
+// Get all available categories
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Video.distinct('category');
+    res.json({
+      success: true,
+      data: categories.filter(category => category && category.trim() !== '')
+    });
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ success: false, message: 'Error fetching categories' });
+  }
+};
+
 // Get single video
 const getVideo = async (req, res) => {
   try {
@@ -325,6 +339,7 @@ const searchVideos = async (req, res) => {
 module.exports = {
   getVideos,
   getVideosByCategory,
+  getCategories,
   getVideo,
   uploadVideo,
   toggleLike,

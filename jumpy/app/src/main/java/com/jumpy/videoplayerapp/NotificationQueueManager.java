@@ -14,10 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class NotificationQueueManager {
-    private static final String TAG = "NotificationQueueManager";
-    private static final String BACKEND_URL = "http://10.0.2.2:5001"; // Local development
-    // For production, use your deployed backend URL
-    // private static final String BACKEND_URL = "https://notify-oxh1.onrender.com";
+    private static final String TAG = AppConfig.DEBUG_TAG + "_NotificationQueue";
     
     private final Context context;
     private final List<NotificationData> notificationQueue;
@@ -31,22 +28,31 @@ public class NotificationQueueManager {
     }
     
     public void addNotification(String appName, String title, String text, String packageName) {
+        Log.i(TAG, "=== addNotification() START ===");
+        Log.i(TAG, "App: " + appName + ", Title: " + title + ", Package: " + packageName);
+        
         NotificationData notification = new NotificationData(appName, title, text, packageName);
         synchronized (notificationQueue) {
             notificationQueue.add(notification);
+            Log.i(TAG, "Notification added to queue. Queue size: " + notificationQueue.size());
         }
         Log.i(TAG, "Added notification to queue: " + appName + " - " + title);
+        Log.i(TAG, "=== addNotification() END ===");
     }
     
     public void startQueueProcessing() {
+        Log.i(TAG, "=== startQueueProcessing() START ===");
         if (isProcessing) {
-            Log.w(TAG, "Queue processing already started");
+            Log.w(TAG, "Queue processing already started - skipping");
+            Log.i(TAG, "=== startQueueProcessing() END (already running) ===");
             return;
         }
         
+        Log.i(TAG, "Starting notification queue processing");
         isProcessing = true;
         scheduler.scheduleAtFixedRate(this::processQueue, 0, 30, TimeUnit.SECONDS);
-        Log.i(TAG, "Notification queue processing started");
+        Log.i(TAG, "Notification queue processing started with 30-second interval");
+        Log.i(TAG, "=== startQueueProcessing() END ===");
     }
     
     public void stopQueueProcessing() {
@@ -58,28 +64,49 @@ public class NotificationQueueManager {
     }
     
     private void processQueue() {
-        if (!isProcessing || notificationQueue.isEmpty()) {
+        Log.i(TAG, "=== processQueue() START ===");
+        if (!isProcessing) {
+            Log.w(TAG, "Queue processing is disabled - skipping");
+            Log.i(TAG, "=== processQueue() END (disabled) ===");
             return;
         }
         
+        if (notificationQueue.isEmpty()) {
+            Log.i(TAG, "Notification queue is empty - nothing to process");
+            Log.i(TAG, "=== processQueue() END (empty queue) ===");
+            return;
+        }
+        
+        Log.i(TAG, "Processing notification queue with " + notificationQueue.size() + " items");
         List<NotificationData> batch;
         synchronized (notificationQueue) {
             batch = new ArrayList<>(notificationQueue);
             notificationQueue.clear();
+            Log.i(TAG, "Batch created with " + batch.size() + " notifications, queue cleared");
         }
         
         if (batch.isEmpty()) {
+            Log.w(TAG, "Batch is empty after creation - skipping");
+            Log.i(TAG, "=== processQueue() END (empty batch) ===");
             return;
         }
         
+        Log.i(TAG, "Sending batch to backend");
         sendBatchToBackend(batch);
+        Log.i(TAG, "=== processQueue() END ===");
     }
     
     private void sendBatchToBackend(List<NotificationData> batch) {
+        Log.i(TAG, "=== sendBatchToBackend() START ===");
+        Log.i(TAG, "Sending batch of " + batch.size() + " notifications to backend");
+        
         try {
             // Convert notifications to JSON
             JSONArray notificationsArray = new JSONArray();
-            for (NotificationData notification : batch) {
+            Log.i(TAG, "Converting " + batch.size() + " notifications to JSON");
+            
+            for (int i = 0; i < batch.size(); i++) {
+                NotificationData notification = batch.get(i);
                 JSONObject notificationJson = new JSONObject();
                 notificationJson.put("title", notification.title);
                 notificationJson.put("body", notification.text);
@@ -88,6 +115,7 @@ public class NotificationQueueManager {
                 notificationJson.put("deviceInfo", new JSONObject());
                 notificationJson.put("notificationData", new JSONObject());
                 notificationsArray.put(notificationJson);
+                Log.i(TAG, "Converted notification " + (i+1) + "/" + batch.size() + ": " + notification.appName);
             }
             
             // Create request body
@@ -96,18 +124,16 @@ public class NotificationQueueManager {
             requestBody.put("deviceId", getDeviceId());
             requestBody.put("batchSize", batch.size());
             
-            // Send to backend
-            String url = BACKEND_URL + "/api/notifications/store/batch";
+            // Send to backend - use correct endpoint
+            String url = AppConfig.API_BASE_URL + "notifications/store/batch";
+            Log.i(TAG, "Sending POST request to: " + url);
             sendPostRequest(url, requestBody.toString());
             
             Log.i(TAG, "Sent batch of " + batch.size() + " notifications to backend");
+            Log.i(TAG, "=== sendBatchToBackend() END ===");
             
         } catch (Exception e) {
-            Log.e(TAG, "Error sending batch to backend", e);
-            // Re-add notifications to queue for retry
-            synchronized (notificationQueue) {
-                notificationQueue.addAll(0, batch);
-            }
+            Log.e(TAG, "Error sending batch to backend: " + e.getMessage());
         }
     }
     
@@ -119,8 +145,8 @@ public class NotificationQueueManager {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
+            connection.setConnectTimeout(AppConfig.REQUEST_TIMEOUT);
+            connection.setReadTimeout(AppConfig.REQUEST_TIMEOUT);
             
             // Send request body
             try (OutputStream os = connection.getOutputStream()) {
@@ -181,7 +207,7 @@ public class NotificationQueueManager {
             requestBody.put("emails", emailsArray);
             requestBody.put("deviceId", getDeviceId());
             
-            String url = BACKEND_URL + "/api/gmail/store/" + userId;
+            String url = AppConfig.GMAIL_URL + "/store/" + userId;
             sendPostRequest(url, requestBody.toString());
             
             Log.i(TAG, "Sent " + emails.size() + " emails to backend for user " + userId);

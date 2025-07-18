@@ -12,4 +12,8 @@ router.post('/signin', authController.signin);
 router.get('/me', auth, authController.getCurrentUser);
 router.put('/profile', auth, authController.updateProfile);
 
+// Google Sign-In routes
+router.post('/google-signin', authController.googleSignIn);
+router.get('/google-profile', auth, authController.getGoogleProfile);
+
 module.exports = router; 

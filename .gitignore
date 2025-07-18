@@ -1,35 +1,53 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Environment variables
-.env
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Firebase service account files (sensitive)
+**/firebase-service-account.json
+**/*-firebase-adminsdk-*.json
+**/google-services.json
+**/jumpy-*.json
+**/tour-dubai-*.json
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # Logs
-logs
 *.log
+logs/
 
 # Runtime data
 pids
@@ -43,64 +61,20 @@ coverage/
 # nyc test coverage
 .nyc_output
 
-# Temporary files
-tmp/
-temp/
+# Dependency directories
+node_modules/
 
-# Build outputs
-build/
-dist/
+# Optional npm cache directory
+.npm
 
-# Cache directories
-.cache/
-.parcel-cache/
-.metro-health-check*
+# Optional REPL history
+.node_repl_history
 
-# Android specific
-*.apk
-*.aab
-*.ap_
-*.dex
+# Output of 'npm pack'
+*.tgz
 
-# iOS specific
-*.ipa
-*.dSYM.zip
-*.dSYM
+# Yarn Integrity file
+.yarn-integrity
 
-# React Native specific
-*.jsbundle
-*.jsbundle.map
-
-# Ruby / CocoaPods
-**/Pods/
-/vendor/bundle/
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Uploads and media files (if you want to ignore them)
-uploads/*
-!uploads/.gitkeep
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Backup files
-*.bak
-*.backup
-*.old
-
-# Lock files (keep package-lock.json but ignore others)
-yarn.lock
-pnpm-lock.yaml
-
-# Separate React Native projects
-VideoPlayerAppNew/
-VideoPlayerApp/ jumpy/jumpy-465913-08f53af635f1.json
+# dotenv environment variables file
+.env

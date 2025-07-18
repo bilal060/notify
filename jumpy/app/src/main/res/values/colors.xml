@@ -9,6 +9,47 @@
     <color name="gray_light">#f8f9fa</color>
     <color name="gray">#666666</color>
     <color name="gray_dark">#333333</color>
+    <color name="dark_gray">#1a1a1a</color>
     <color name="gray_border">#e0e0e0</color>
     <color name="text_hint">#999999</color>
+    
+    <!-- Chat Design Colors -->
+    <color name="white_50">#80ffffff</color>
+    <color name="white_60">#99ffffff</color>
+    <color name="white_70">#b3ffffff</color>
+    <color name="white_80">#ccffffff</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- Discord Colors -->
+    <color name="discord_background">#36393f</color>
+    <color name="discord_sidebar">#2f3136</color>
+    <color name="discord_header">#292b2f</color>
+    <color name="discord_gray">#72767d</color>
+    <color name="discord_green">#43b581</color>
+    <color name="discord_red">#f04747</color>
+    <color name="discord_yellow">#faa61a</color>
+    
+    <!-- Telegram Colors -->
+    <color name="telegram_blue">#0088cc</color>
+    <color name="telegram_dark">#17212b</color>
+    <color name="telegram_light">#242f3d</color>
+    
+    <!-- WhatsApp Colors -->
+    <color name="whatsapp_green">#25d366</color>
+    <color name="whatsapp_dark">#075e54</color>
+    <color name="whatsapp_light">#128c7e</color>
+    
+    <!-- Status Colors -->
+    <color name="typing_color">#00bcd4</color>
+    <color name="online_color">#4caf50</color>
+    <color name="offline_color">#9e9e9e</color>
+    <color name="away_color">#ff9800</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#667eea</color>
+    <color name="gradient_center">#764ba2</color>
+    <color name="gradient_end">#f093fb</color>
+    <color name="dark_gradient_start">#1a1a2e</color>
+    <color name="dark_gradient_center">#16213e</color>
+    <color name="dark_gradient_end">#0f3460</color>
 </resources> 

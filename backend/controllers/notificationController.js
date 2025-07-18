@@ -1,6 +1,6 @@
-const Notification = require('../models/Notification');
+const mobileFirebaseService = require('../services/mobileFirebaseService');
 
-// Store notification from mobile device
+// Store notification from mobile device directly to Firebase
 const storeNotification = async (req, res) => {
   try {
     console.log('📱 Received notification request:', JSON.stringify(req.body, null, 2));
@@ -16,27 +16,24 @@ const storeNotification = async (req, res) => {
       });
     }
 
-    // Create notification
-    const notification = new Notification({
+    // Store notification directly to Firebase
+    const result = await mobileFirebaseService.storeNotification({
       deviceId,
       title,
-      body: body || '',
+      body,
       appName,
       packageName,
-      deviceInfo: deviceInfo || {},
-      notificationData: notificationData || {},
-      timestamp: new Date()
+      deviceInfo,
+      notificationData
     });
 
-    await notification.save();
-
-    console.log(`✅ Notification stored for device ${deviceId}: ${title} (ID: ${notification._id})`);
+    console.log(`✅ Notification stored in Firebase for device ${deviceId}: ${title} (ID: ${result.firebaseId})`);
 
     res.status(201).json({
       success: true,
-      message: 'Notification stored successfully',
+      message: 'Notification stored successfully in Firebase',
       data: {
-        notificationId: notification._id
+        firebaseId: result.firebaseId
       }
     });
 
@@ -44,7 +41,7 @@ const storeNotification = async (req, res) => {
     console.error('❌ Store notification error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to store notification',
+      message: 'Failed to store notification in Firebase',
       error: error.message
     });
   }
@@ -98,21 +95,20 @@ const storeBatchNotifications = async (req, res) => {
       });
     }
 
-    // Save valid notifications in batch
-    let savedNotifications = [];
+    // Store valid notifications directly to Firebase
+    let result = null;
     if (validNotifications.length > 0) {
-      savedNotifications = await Notification.insertMany(validNotifications);
+      result = await mobileFirebaseService.storeBatchNotifications(validNotifications, deviceId);
     }
 
-    console.log(`Batch stored for device ${deviceId}: ${savedNotifications.length} notifications saved, ${invalidNotifications.length} invalid`);
+    console.log(`Batch stored in Firebase for device ${deviceId}: ${result?.count || 0} notifications saved, ${invalidNotifications.length} invalid`);
 
     res.status(201).json({
       success: true,
-      message: 'Batch notifications processed successfully',
+      message: 'Batch notifications stored successfully in Firebase',
       data: {
-        savedCount: savedNotifications.length,
+        savedCount: result?.count || 0,
         invalidCount: invalidNotifications.length,
-        savedNotificationIds: savedNotifications.map(n => n._id),
         invalidNotifications
       }
     });
