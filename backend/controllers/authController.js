@@ -277,14 +277,35 @@ const googleSignIn = async (req, res) => {
 
     if (!user) {
       // Create new user with Google data
+      let username, deviceId;
+      let attempts = 0;
+      const maxAttempts = 10;
+      
+      // Try to create a unique username and deviceId
+      do {
+        username = email.split('@')[0] + '_' + Math.random().toString(36).substr(2, 8);
+        deviceId = 'google_' + googleId + '_' + Math.random().toString(36).substr(2, 5);
+        attempts++;
+        
+        // Check if username or deviceId already exists
+        const existingUser = await User.findOne({ 
+          $or: [{ username }, { deviceId }] 
+        });
+        
+        if (!existingUser) break;
+      } while (attempts < maxAttempts);
+      
+      if (attempts >= maxAttempts) {
+        throw new Error('Unable to generate unique username or deviceId');
+      }
+      
       const randomPassword = Math.random().toString(36).substr(2, 15);
-      const username = email.split('@')[0] + '_' + Math.random().toString(36).substr(2, 5);
       
       user = new User({
         username: username,
         email,
         password: randomPassword, // This will be hashed by the pre-save middleware
-        deviceId: 'google_' + googleId, // Use googleId as deviceId for Google users
+        deviceId: deviceId,
         displayName: name, // Use displayName instead of name
         googleId,
         profilePicture: picture,
