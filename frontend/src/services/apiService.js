@@ -1,6 +1,6 @@
 const apiService = {
   // Base configuration
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5001',
+  baseURL: process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_URL || 'http://localhost:5001',
   
   // Helper method to make API calls
   async request(endpoint, options = {}) {
