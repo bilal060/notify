@@ -1,28 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-// import { useAuth } from '../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import './Login.css';
+import apiService from '../../services/apiService';
+import './Auth.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // const { login } = useAuth();
 
   const handleGoogleSignInSuccess = useCallback(async (response) => {
     try {
       setLoading(true);
-      // const result = await login(response.credential);
-      // if (result.success) {
-      //   toast.success('Login successful!');
-      //   navigate('/dashboard');
-      // } else {
-      //   toast.error(result.message || 'Login failed');
-      // }
-      toast.success('Google sign-in successful!');
-      navigate('/dashboard');
+      const result = await apiService.googleSignIn(response.credential);
+      if (result.success) {
+        toast.success('Google sign-in successful!');
+        navigate('/dashboard');
+      } else {
+        toast.error(result.message || 'Login failed');
+      }
     } catch (error) {
       console.error('Google sign-in error:', error);
       toast.error('Google sign-in failed');
@@ -53,15 +50,7 @@ const Login = () => {
       // Generate a device ID for web access
       const deviceId = `web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      // const data = await login({ email, password, deviceId });
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, deviceId }),
-      });
-      const data = await response.json();
+      const data = await apiService.login({ email, password, deviceId });
 
       if (data.success) {
         // Store token in localStorage

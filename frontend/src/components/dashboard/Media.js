@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import apiService from '../../services/apiService';
 import './Dashboard.css';
 
 const Media = () => {
@@ -13,14 +14,9 @@ const Media = () => {
   const fetchMedia = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/media?page=${currentPage}`);
-      if (response.ok) {
-        const data = await response.json();
-        setMedia(data.media || []);
-        setTotalPages(data.totalPages || 1);
-      } else {
-        toast.error('Failed to fetch media');
-      }
+      const data = await apiService.getMedia(currentPage);
+      setMedia(data.media || []);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error('Error fetching media:', error);
       toast.error('Error loading media');
@@ -36,8 +32,7 @@ const Media = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/media/stats');
-      const data = await response.json();
+      const data = await apiService.request('/api/media/stats');
       
       if (data.success) {
         setStats(data.data);

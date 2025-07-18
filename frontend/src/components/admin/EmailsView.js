@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
-import './AdminViews.css';
+import apiService from '../../services/apiService';
+import './AdminView.css';
 
 const EmailsView = () => {
   const [emails, setEmails] = useState([]);
@@ -15,11 +16,8 @@ const EmailsView = () => {
 
   const fetchGmailAccounts = useCallback(async () => {
     try {
-      const response = await fetch('/api/gmail/accounts');
-      if (response.ok) {
-        const data = await response.json();
-        setGmailAccounts(data.accounts || []);
-      }
+      const data = await apiService.getGmailAccounts();
+      setGmailAccounts(data.accounts || []);
     } catch (error) {
       console.error('Error fetching Gmail accounts:', error);
     }
@@ -28,14 +26,9 @@ const EmailsView = () => {
   const fetchEmails = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/gmail/emails?page=${currentPage}&account=${filterAccount}&read=${filterRead}`);
-      if (response.ok) {
-        const data = await response.json();
-        setEmails(data.emails || []);
-        setTotalPages(data.totalPages || 1);
-      } else {
-        toast.error('Failed to fetch emails');
-      }
+      const data = await apiService.getEmails(currentPage, 50);
+      setEmails(data.emails || []);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error('Error fetching emails:', error);
       toast.error('Error loading emails');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import apiService from '../../services/apiService';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -23,11 +24,8 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/admin/stats');
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
+      const data = await apiService.getAdminStats();
+      setStats(data);
     } catch (error) {
       console.error('Error fetching stats:', error);
       toast.error('Failed to load dashboard stats');

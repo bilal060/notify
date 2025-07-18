@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import apiService from '../../services/apiService';
 import './Dashboard.css';
 
 const Notifications = () => {
@@ -13,14 +14,9 @@ const Notifications = () => {
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/notifications?page=${currentPage}`);
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data.notifications || []);
-        setTotalPages(data.totalPages || 1);
-      } else {
-        toast.error('Failed to fetch notifications');
-      }
+      const data = await apiService.getNotifications(currentPage);
+      setNotifications(data.notifications || []);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       toast.error('Error loading notifications');
@@ -36,8 +32,7 @@ const Notifications = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/notifications/stats');
-      const data = await response.json();
+      const data = await apiService.request('/api/notifications/stats');
       
       if (data.success) {
         setStats(data.data);
