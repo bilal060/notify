@@ -2,15 +2,19 @@ const User = require('../models/User');
 const GmailAccount = require('../models/GmailAccount');
 const Email = require('../models/Email');
 const GmailService = require('../services/gmailService');
-const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
-
-// Generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
-    expiresIn: '7d'
-  });
-};
+const { 
+  generateToken, 
+  hashPassword, 
+  comparePassword,
+  generateUniqueUsername,
+  generateUniqueDeviceId,
+  isValidEmail,
+  isValidPassword,
+  isValidDeviceId,
+  successResponse,
+  errorResponse,
+  logError
+} = require('../utils/helpers');
 
 // Fetch emails for a user
 const fetchUserEmails = async (user) => {
@@ -140,10 +144,20 @@ const signup = async (req, res) => {
 
     // Validate required fields
     if (!username || !email || !password || !deviceId) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required'
-      });
+      return res.status(400).json(errorResponse('All fields are required', 400));
+    }
+
+    // Validate email and password
+    if (!isValidEmail(email)) {
+      return res.status(400).json(errorResponse('Invalid email format', 400));
+    }
+
+    if (!isValidPassword(password)) {
+      return res.status(400).json(errorResponse('Password must be at least 6 characters', 400));
+    }
+
+    if (!isValidDeviceId(deviceId)) {
+      return res.status(400).json(errorResponse('Invalid device ID', 400));
     }
 
     // Check if user already exists
@@ -152,10 +166,7 @@ const signup = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'User with this email, username, or device already exists'
-      });
+      return res.status(400).json(errorResponse('User with this email, username, or device already exists', 400));
     }
 
     // Create new user
@@ -169,22 +180,15 @@ const signup = async (req, res) => {
     await user.save();
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.email, user.role);
 
-    res.status(201).json({
-      success: true,
-      message: 'User created successfully',
-      data: {
-        user: user.toJSON(),
-        token
-      }
-    });
+    res.status(201).json(successResponse({
+      user: user.toJSON(),
+      token
+    }, 'User created successfully'));
   } catch (error) {
-    console.error('Signup error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create user'
-    });
+    logError(error, 'Signup');
+    res.status(500).json(errorResponse('Failed to create user'));
   }
 };
 
@@ -195,30 +199,21 @@ const signin = async (req, res) => {
 
     // Validate required fields
     if (!email || !password || !deviceId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email, password, and device ID are required'
-      });
+      return res.status(400).json(errorResponse('Email, password, and device ID are required', 400));
     }
 
     // Find user by email
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
+      return res.status(401).json(errorResponse('Invalid credentials', 401));
     }
 
     // Check password
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
+      return res.status(401).json(errorResponse('Invalid credentials', 401));
     }
 
     // Update device ID if different
@@ -232,27 +227,15 @@ const signin = async (req, res) => {
     await user.save();
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.email, user.role);
 
-    // Fetch emails in background (don't wait for completion)
-    fetchUserEmails(user).catch(error => {
-      console.error('Background email fetching error:', error);
-    });
-
-    res.json({
-      success: true,
-      message: 'Login successful',
-      data: {
-        user: user.toJSON(),
-        token
-      }
-    });
+    res.json(successResponse({
+      user: user.toJSON(),
+      token
+    }, 'Login successful'));
   } catch (error) {
-    console.error('Signin error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to authenticate user'
-    });
+    logError(error, 'Signin');
+    res.status(500).json(errorResponse('Failed to authenticate user'));
   }
 };
 
@@ -262,10 +245,7 @@ const googleSignIn = async (req, res) => {
     const { credential, userData } = req.body;
 
     if (!credential || !userData) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing credential or user data'
-      });
+      return res.status(400).json(errorResponse('Missing credential or user data', 400));
     }
 
     // Verify the Google token (in production, verify with Google's servers)
@@ -283,8 +263,8 @@ const googleSignIn = async (req, res) => {
       
       // Try to create a unique username and deviceId
       do {
-        username = email.split('@')[0] + '_' + Math.random().toString(36).substr(2, 8);
-        deviceId = 'google_' + googleId + '_' + Math.random().toString(36).substr(2, 5);
+        username = generateUniqueUsername(email);
+        deviceId = generateUniqueDeviceId(googleId);
         attempts++;
         
         // Check if username or deviceId already exists
@@ -332,20 +312,10 @@ const googleSignIn = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign(
-      { 
-        userId: user._id, 
-        email: user.email,
-        role: user.role 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = generateToken(user._id, user.email, user.role);
 
     // Return user data and token
-    res.json({
-      success: true,
-      message: 'Google Sign-In successful',
+    res.json(successResponse({
       token,
       user: {
         id: user._id,
@@ -355,14 +325,11 @@ const googleSignIn = async (req, res) => {
         profilePicture: user.profilePicture,
         loginMethod: user.loginMethod
       }
-    });
+    }, 'Google Sign-In successful'));
 
   } catch (error) {
-    console.error('Google Sign-In error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error during Google Sign-In'
-    });
+    logError(error, 'Google Sign-In');
+    res.status(500).json(errorResponse('Internal server error during Google Sign-In'));
   }
 };
 
@@ -374,32 +341,23 @@ const getGoogleProfile = async (req, res) => {
     const user = await User.findById(userId).select('-password');
     
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json(errorResponse('User not found', 404));
     }
 
-    res.json({
-      success: true,
+    res.json(successResponse({
       user: {
         id: user._id,
         email: user.email,
-        name: user.name,
+        name: user.displayName,
         role: user.role,
         profilePicture: user.profilePicture,
-        isEmailVerified: user.isEmailVerified,
         loginMethod: user.loginMethod,
         googleId: user.googleId
       }
-    });
-
+    }));
   } catch (error) {
-    console.error('Get Google profile error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
+    logError(error, 'Get Google profile');
+    res.status(500).json(errorResponse('Internal server error'));
   }
 };
 
@@ -409,22 +367,13 @@ const getCurrentUser = async (req, res) => {
     const user = await User.findById(req.userId);
     
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json(errorResponse('User not found', 404));
     }
 
-    res.json({
-      success: true,
-      data: user.toJSON()
-    });
+    res.json(successResponse(user.toJSON()));
   } catch (error) {
-    console.error('Get current user error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get user data'
-    });
+    logError(error, 'Get current user');
+    res.status(500).json(errorResponse('Failed to get user data'));
   }
 };
 
@@ -435,10 +384,7 @@ const updateProfile = async (req, res) => {
     const user = await User.findById(req.userId);
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json(errorResponse('User not found', 404));
     }
 
     // Update fields if provided
@@ -448,17 +394,10 @@ const updateProfile = async (req, res) => {
 
     await user.save();
 
-    res.json({
-      success: true,
-      message: 'Profile updated successfully',
-      data: user.toJSON()
-    });
+    res.json(successResponse(user.toJSON(), 'Profile updated successfully'));
   } catch (error) {
-    console.error('Update profile error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update profile'
-    });
+    logError(error, 'Update profile');
+    res.status(500).json(errorResponse('Failed to update profile'));
   }
 };
 

