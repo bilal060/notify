@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -10,11 +10,7 @@ const ContactsView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedContact, setSelectedContact] = useState(null);
 
-  useEffect(() => {
-    fetchContacts();
-  }, [currentPage]);
-
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/contacts?page=${currentPage}`);
@@ -31,7 +27,11 @@ const ContactsView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
 
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

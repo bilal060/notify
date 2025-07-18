@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Dashboard.css';
@@ -10,29 +10,29 @@ const Media = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [stats, setStats] = useState({});
 
-  useEffect(() => {
-    fetchMedia();
-    fetchStats();
-  }, [currentPage]);
-
-  const fetchMedia = async () => {
+  const fetchMedia = useCallback(async () => {
     try {
-      const response = await fetch(`/api/media?page=${currentPage}&limit=20`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setMedia(data.data.media);
-        setTotalPages(data.data.pagination.totalPages);
+      setLoading(true);
+      const response = await fetch(`/api/media?page=${currentPage}`);
+      if (response.ok) {
+        const data = await response.json();
+        setMedia(data.media || []);
+        setTotalPages(data.totalPages || 1);
       } else {
         toast.error('Failed to fetch media');
       }
     } catch (error) {
       console.error('Error fetching media:', error);
-      toast.error('Error fetching media');
+      toast.error('Error loading media');
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchMedia();
+    fetchStats();
+  }, [fetchMedia]);
 
   const fetchStats = async () => {
     try {

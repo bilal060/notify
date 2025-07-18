@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -13,12 +13,7 @@ const EmailsView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedEmail, setSelectedEmail] = useState(null);
 
-  useEffect(() => {
-    fetchGmailAccounts();
-    fetchEmails();
-  }, [currentPage, filterAccount, filterRead]);
-
-  const fetchGmailAccounts = async () => {
+  const fetchGmailAccounts = useCallback(async () => {
     try {
       const response = await fetch('/api/gmail/accounts');
       if (response.ok) {
@@ -28,9 +23,9 @@ const EmailsView = () => {
     } catch (error) {
       console.error('Error fetching Gmail accounts:', error);
     }
-  };
+  }, []);
 
-  const fetchEmails = async () => {
+  const fetchEmails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/gmail/emails?page=${currentPage}&account=${filterAccount}&read=${filterRead}`);
@@ -47,7 +42,12 @@ const EmailsView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterAccount, filterRead]);
+
+  useEffect(() => {
+    fetchGmailAccounts();
+    fetchEmails();
+  }, [fetchGmailAccounts, fetchEmails]);
 
   const filteredEmails = emails.filter(email =>
     email.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||

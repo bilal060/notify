@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -11,11 +11,7 @@ const DevicesView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedDevice, setSelectedDevice] = useState(null);
 
-  useEffect(() => {
-    fetchDevices();
-  }, [currentPage, filterStatus]);
-
-  const fetchDevices = async () => {
+  const fetchDevices = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/devices?page=${currentPage}&status=${filterStatus}`);
@@ -32,7 +28,11 @@ const DevicesView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterStatus]);
+
+  useEffect(() => {
+    fetchDevices();
+  }, [fetchDevices]);
 
   const filteredDevices = devices.filter(device =>
     device.deviceId.toLowerCase().includes(searchTerm.toLowerCase()) ||

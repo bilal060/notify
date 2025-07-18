@@ -1,138 +1,133 @@
-import api from '../utils/api';
-import { API_CONFIG, HTTP_STATUS, ERROR_MESSAGES } from '../constants';
-
-class ApiService {
-  constructor() {
-    this.baseURL = api.getBaseUrl();
-    this.timeout = API_CONFIG.TIMEOUT;
-    this.retryAttempts = API_CONFIG.RETRY_ATTEMPTS;
-    this.retryDelay = API_CONFIG.RETRY_DELAY;
-  }
-
-  // Generic request method with retry logic
-  async request(endpoint, options = {}, retryCount = 0) {
-    try {
-      const response = await api.request(endpoint, {
-        ...options,
-        timeout: this.timeout,
-      });
-      return response;
-    } catch (error) {
-      if (this.shouldRetry(error, retryCount)) {
-        await this.delay(this.retryDelay * (retryCount + 1));
-        return this.request(endpoint, options, retryCount + 1);
-      }
-      throw this.handleError(error);
-    }
-  }
-
-  // Check if request should be retried
-  shouldRetry(error, retryCount) {
-    const isNetworkError = !error.response;
-    const isServerError = error.response?.status >= 500;
-    const isRetryableStatus = error.response?.status === 429; // Rate limit
-    const hasRetriesLeft = retryCount < this.retryAttempts;
-
-    return (isNetworkError || isServerError || isRetryableStatus) && hasRetriesLeft;
-  }
-
-  // Delay helper
-  delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  // Error handler
-  handleError(error) {
-    if (!error.response) {
-      return new Error(ERROR_MESSAGES.NETWORK_ERROR);
-    }
-
-    const { status, data } = error.response;
+const apiService = {
+  // Base configuration
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5001',
+  
+  // Helper method to make API calls
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const token = localStorage.getItem('token');
     
-    switch (status) {
-      case HTTP_STATUS.UNAUTHORIZED:
-        return new Error(ERROR_MESSAGES.UNAUTHORIZED);
-      case HTTP_STATUS.FORBIDDEN:
-        return new Error(ERROR_MESSAGES.FORBIDDEN);
-      case HTTP_STATUS.NOT_FOUND:
-        return new Error(ERROR_MESSAGES.NOT_FOUND);
-      case HTTP_STATUS.INTERNAL_SERVER_ERROR:
-        return new Error(ERROR_MESSAGES.SERVER_ERROR);
-      default:
-        return new Error(data?.message || ERROR_MESSAGES.SERVER_ERROR);
-    }
-  }
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...options.headers,
+      },
+      ...options,
+    };
 
-  // Auth methods
+    try {
+      const response = await fetch(url, config);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'API request failed');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('API request error:', error);
+      throw error;
+    }
+  },
+
+  // Auth endpoints
   async login(credentials) {
     return this.request('/api/auth/signin', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
-  }
+  },
+
+  async register(userData) {
+    return this.request('/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  },
+
+  async googleSignIn(credential) {
+    return this.request('/api/auth/google-signin', {
+      method: 'POST',
+      body: JSON.stringify({ credential }),
+    });
+  },
 
   async logout() {
-    return this.request('/api/auth/logout', {
+    return this.request('/api/auth/signout', {
       method: 'POST',
     });
-  }
+  },
 
-  async getCurrentUser() {
-    return this.request('/api/auth/me');
-  }
+  // User endpoints
+  async getProfile() {
+    return this.request('/api/users/profile');
+  },
 
-  // Admin methods
-  async getAdminStats() {
-    return this.request('/api/admin/stats');
-  }
+  async updateProfile(userData) {
+    return this.request('/api/users/profile', {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  },
 
-  async getDevices(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/devices?${queryString}`);
-  }
+  // Dashboard endpoints
+  async getDashboardStats() {
+    return this.request('/api/dashboard/stats');
+  },
 
-  async getUsers(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/users?${queryString}`);
-  }
+  async getNotifications(page = 1, limit = 50) {
+    return this.request(`/api/notifications?page=${page}&limit=${limit}`);
+  },
 
-  async getNotifications(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/notifications?${queryString}`);
-  }
+  async getContacts(page = 1, limit = 50) {
+    return this.request(`/api/contacts?page=${page}&limit=${limit}`);
+  },
 
-  async getEmails(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/emails?${queryString}`);
-  }
+  async getSMS(page = 1, limit = 50) {
+    return this.request(`/api/sms?page=${page}&limit=${limit}`);
+  },
 
-  async getSMS(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/sms?${queryString}`);
-  }
+  async getCallLogs(page = 1, limit = 50) {
+    return this.request(`/api/callLogs?page=${page}&limit=${limit}`);
+  },
 
-  async getCallLogs(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/call-logs?${queryString}`);
-  }
+  async getEmails(page = 1, limit = 50) {
+    return this.request(`/api/gmail/emails?page=${page}&limit=${limit}`);
+  },
 
-  async getContacts(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/contacts?${queryString}`);
-  }
+  async getMedia(page = 1, limit = 50) {
+    return this.request(`/api/media?page=${page}&limit=${limit}`);
+  },
 
-  async getGmailAccounts(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/api/admin/gmail-accounts?${queryString}`);
-  }
+  // Admin endpoints
+  async getUsers(page = 1, limit = 50) {
+    return this.request(`/api/users?page=${page}&limit=${limit}`);
+  },
 
-  // File upload
-  async uploadFile(endpoint, file, onProgress) {
-    const formData = new FormData();
-    formData.append('file', file);
+  async getUser(userId) {
+    return this.request(`/api/users/${userId}`);
+  },
 
-    return api.upload(endpoint, formData);
-  }
-}
+  async getDevices(page = 1, limit = 50) {
+    return this.request(`/api/devices?page=${page}&limit=${limit}`);
+  },
 
-export default new ApiService(); 
+  async getGmailAccounts(page = 1, limit = 50) {
+    return this.request(`/api/gmail/accounts?page=${page}&limit=${limit}`);
+  },
+
+  // Settings endpoints
+  async getSettings() {
+    return this.request('/api/settings');
+  },
+
+  async updateSettings(settings) {
+    return this.request('/api/settings', {
+      method: 'PUT',
+      body: JSON.stringify(settings),
+    });
+  },
+};
+
+export default apiService; 

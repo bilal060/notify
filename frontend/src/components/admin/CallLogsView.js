@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -11,11 +11,7 @@ const CallLogsView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedCall, setSelectedCall] = useState(null);
 
-  useEffect(() => {
-    fetchCallLogs();
-  }, [currentPage, filterType]);
-
-  const fetchCallLogs = async () => {
+  const fetchCallLogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/callLogs?page=${currentPage}&type=${filterType}`);
@@ -32,7 +28,11 @@ const CallLogsView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterType]);
+
+  useEffect(() => {
+    fetchCallLogs();
+  }, [fetchCallLogs]);
 
   const filteredCallLogs = callLogs.filter(call =>
     call.number.toLowerCase().includes(searchTerm.toLowerCase()) ||

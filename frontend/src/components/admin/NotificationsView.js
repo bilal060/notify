@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -12,11 +12,7 @@ const NotificationsView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedNotification, setSelectedNotification] = useState(null);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [currentPage, filterCategory, filterRead]);
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/notifications?page=${currentPage}&category=${filterCategory}&read=${filterRead}`);
@@ -33,7 +29,11 @@ const NotificationsView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterCategory, filterRead]);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   const filteredNotifications = notifications.filter(notification =>
     notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

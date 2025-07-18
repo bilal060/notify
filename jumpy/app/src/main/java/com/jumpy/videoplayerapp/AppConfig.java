@@ -7,7 +7,8 @@ package com.jumpy.videoplayerapp;
 public class AppConfig {
     
     // Backend configuration
-    public static final String BACKEND_BASE_URL = "https://notify-oxh1.onrender.com";
+    public static final String BACKEND_BASE_URL = "http://10.0.2.2:5001"; // Local development for Android emulator
+    // public static final String BACKEND_BASE_URL = "http://localhost:5001"; // For physical device
     
     // API endpoints
     public static final String API_BASE_URL = BACKEND_BASE_URL + "/api/";

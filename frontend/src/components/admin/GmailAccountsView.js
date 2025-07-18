@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -10,11 +10,7 @@ const GmailAccountsView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedAccount, setSelectedAccount] = useState(null);
 
-  useEffect(() => {
-    fetchGmailAccounts();
-  }, [currentPage]);
-
-  const fetchGmailAccounts = async () => {
+  const fetchGmailAccounts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/gmail/accounts?page=${currentPage}`);
@@ -31,7 +27,11 @@ const GmailAccountsView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchGmailAccounts();
+  }, [fetchGmailAccounts]);
 
   const filteredAccounts = gmailAccounts.filter(account =>
     account.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

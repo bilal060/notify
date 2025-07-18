@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -11,11 +11,7 @@ const UsersView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [currentPage, filterStatus]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/users?page=${currentPage}&status=${filterStatus}`);
@@ -32,7 +28,11 @@ const UsersView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterStatus]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Dashboard.css';
@@ -8,27 +8,27 @@ const UserDetail = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
-      const response = await fetch(`/api/dashboard/${userId}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setUserData(data.data);
+      setLoading(true);
+      const response = await fetch(`/api/users/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUserData(data.user);
       } else {
         toast.error('Failed to fetch user data');
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      toast.error('Error fetching user data');
+      toast.error('Error loading user data');
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();

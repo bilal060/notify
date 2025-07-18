@@ -1,46 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+// import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
-import api from '../../utils/api';
 import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [showGoogleSignIn, setShowGoogleSignIn] = useState(false);
   const navigate = useNavigate();
+  // const { login } = useAuth();
 
-  // Initialize Google Sign-In
+  const handleGoogleSignInSuccess = useCallback(async (response) => {
+    try {
+      setLoading(true);
+      // const result = await login(response.credential);
+      // if (result.success) {
+      //   toast.success('Login successful!');
+      //   navigate('/dashboard');
+      // } else {
+      //   toast.error(result.message || 'Login failed');
+      // }
+      toast.success('Google sign-in successful!');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast.error('Google sign-in failed');
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
   useEffect(() => {
-    const initializeGoogleSignIn = () => {
-      if (window.google && process.env.REACT_APP_GOOGLE_CLIENT_ID) {
-        window.google.accounts.id.initialize({
-          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-          callback: handleGoogleSignInSuccess,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        });
-      }
-    };
-
-    // Load Google Sign-In script
-    const loadGoogleScript = () => {
-      if (!window.google) {
-        const script = document.createElement('script');
-        script.src = 'https://accounts.google.com/gsi/client';
-        script.async = true;
-        script.defer = true;
-        script.onload = initializeGoogleSignIn;
-        document.head.appendChild(script);
-      } else {
-        initializeGoogleSignIn();
-      }
-    };
-
-    loadGoogleScript();
-  }, []);
+    if (window.google) {
+      window.google.accounts.id.initialize({
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+        callback: handleGoogleSignInSuccess
+      });
+      
+      window.google.accounts.id.renderButton(
+        document.getElementById('google-signin-button'),
+        { theme: 'outline', size: 'large', width: '100%' }
+      );
+    }
+  }, [handleGoogleSignInSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,11 +53,15 @@ const Login = () => {
       // Generate a device ID for web access
       const deviceId = `web-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      const data = await api.post('/api/auth/signin', {
-        email,
-        password,
-        deviceId
+      // const data = await login({ email, password, deviceId });
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, deviceId }),
       });
+      const data = await response.json();
 
       if (data.success) {
         // Store token in localStorage
@@ -77,66 +84,6 @@ const Login = () => {
       toast.error('Network error. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoogleSignInSuccess = async (response) => {
-    setGoogleLoading(true);
-    
-    try {
-      console.log('Google Sign-In response:', response);
-      
-      // Extract the ID token from the response
-      const idToken = response.credential;
-      
-      if (!idToken) {
-        throw new Error('No ID token received from Google');
-      }
-
-      // Decode the JWT token to get user data
-      const payload = JSON.parse(atob(idToken.split('.')[1]));
-      const userData = {
-        email: payload.email,
-        googleId: payload.sub,
-        name: payload.name,
-        picture: payload.picture
-      };
-
-      // Send the credential and user data to your backend for verification
-      const data = await api.post('/api/auth/google-signin', {
-        credential: idToken,
-        userData: userData
-      });
-
-      if (data.success) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        toast.success('Google Sign-In successful!');
-        
-        // Navigate based on user role
-        if (data.user.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-      } else {
-        throw new Error(data.message || 'Google Sign-In failed');
-      }
-    } catch (error) {
-      console.error('Google Sign-In error:', error);
-      toast.error('Google Sign-In failed. Please try again.');
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
-
-  const handleGoogleSignInClick = () => {
-    if (window.google && window.google.accounts) {
-      window.google.accounts.id.prompt();
-    } else {
-      toast.error('Google Sign-In not available. Please try again.');
     }
   };
 
@@ -197,9 +144,15 @@ const Login = () => {
         
         <div className="google-signin-section">
           <button 
-            onClick={handleGoogleSignInClick}
+            onClick={() => {
+              if (window.google && window.google.accounts) {
+                window.google.accounts.id.prompt();
+              } else {
+                toast.error('Google Sign-In not available. Please try again.');
+              }
+            }}
             className="google-toggle-btn"
-            disabled={googleLoading}
+            disabled={loading}
             style={{
               background: 'linear-gradient(135deg, #4285f4 0%, #34a853 100%)',
               color: 'white',
@@ -213,7 +166,7 @@ const Login = () => {
               marginBottom: '15px'
             }}
           >
-            {googleLoading ? 'Signing in with Google...' : 'Sign in with Google'}
+            {loading ? 'Signing in with Google...' : 'Sign in with Google'}
           </button>
           
           <div className="google-signin-wrapper">

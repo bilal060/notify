@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Dashboard.css';
@@ -10,29 +10,29 @@ const Notifications = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [stats, setStats] = useState({});
 
-  useEffect(() => {
-    fetchNotifications();
-    fetchStats();
-  }, [currentPage]);
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
-      const response = await fetch(`/api/notifications?page=${currentPage}&limit=50`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setNotifications(data.data.notifications);
-        setTotalPages(data.data.pagination.totalPages);
+      setLoading(true);
+      const response = await fetch(`/api/notifications?page=${currentPage}`);
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+        setTotalPages(data.totalPages || 1);
       } else {
         toast.error('Failed to fetch notifications');
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
-      toast.error('Error fetching notifications');
+      toast.error('Error loading notifications');
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchNotifications();
+    fetchStats();
+  }, [fetchNotifications]);
 
   const fetchStats = async () => {
     try {

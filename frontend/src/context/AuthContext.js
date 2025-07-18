@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { STORAGE_KEYS, ADMIN_CONFIG, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../constants';
-import apiService from '../services/apiService';
+import { STORAGE_KEYS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../constants';
+import api from '../services/apiService';
 
 // Action types
 const AUTH_ACTIONS = {
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
     
     try {
-      const data = await apiService.login(credentials);
+      const data = await api.login(credentials);
       
       if (data.success) {
         const { user, token } = data.data;

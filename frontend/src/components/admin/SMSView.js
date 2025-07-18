@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import './AdminViews.css';
 
@@ -11,11 +11,7 @@ const SMSView = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedSMS, setSelectedSMS] = useState(null);
 
-  useEffect(() => {
-    fetchSMS();
-  }, [currentPage, filterType]);
-
-  const fetchSMS = async () => {
+  const fetchSMS = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/sms?page=${currentPage}&type=${filterType}`);
@@ -32,7 +28,11 @@ const SMSView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterType]);
+
+  useEffect(() => {
+    fetchSMS();
+  }, [fetchSMS]);
 
   const filteredSMS = smsMessages.filter(sms =>
     sms.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
