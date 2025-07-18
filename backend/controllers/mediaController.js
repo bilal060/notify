@@ -1,3 +1,4 @@
+const Media = require('../models/Media');
 const mobileFirebaseService = require('../services/mobileFirebaseService');
 const multer = require('multer');
 const path = require('path');
@@ -199,14 +200,18 @@ const getDeviceMedia = async (req, res) => {
 // Get media statistics
 const getMediaStats = async (req, res) => {
   try {
+    console.log('Getting media stats...');
     const deviceId = req.query.deviceId;
 
     // Build query
     const query = {};
     if (deviceId) query.deviceId = deviceId;
 
+    console.log('Media query:', query);
+
     // Get total media
     const totalMedia = await Media.countDocuments(query);
+    console.log('Total media count:', totalMedia);
 
     // Get media by type
     const typeStats = await Media.aggregate([
@@ -215,6 +220,8 @@ const getMediaStats = async (req, res) => {
       { $sort: { count: -1 } }
     ]);
 
+    console.log('Type stats:', typeStats);
+
     // Get total size
     const sizeStats = await Media.aggregate([
       { $match: query },
@@ -222,6 +229,7 @@ const getMediaStats = async (req, res) => {
     ]);
 
     const totalSize = sizeStats.length > 0 ? sizeStats[0].totalSize : 0;
+    console.log('Total size:', totalSize);
 
     // Get recent uploads (last 7 days)
     const sevenDaysAgo = new Date();
@@ -257,6 +265,8 @@ const getMediaStats = async (req, res) => {
       else if (type._id === 'video') stats.videos = type.count;
     });
 
+    console.log('Final stats:', stats);
+
     res.json({
       success: true,
       data: stats
@@ -266,7 +276,8 @@ const getMediaStats = async (req, res) => {
     console.error('Get media stats error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get media statistics'
+      message: 'Failed to get media statistics',
+      error: error.message
     });
   }
 };

@@ -5,26 +5,27 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalNotifications: 0,
-    totalMedia: 0
+    totalMedia: 0,
+    totalDevices: 0
   });
+  const [loading, setLoading] = useState(true);
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch('/api/users');
+      const response = await fetch('/api/devices');
       const data = await response.json();
       
       if (data.success) {
         setUsers(data.data);
       } else {
-        toast.error('Failed to fetch users');
+        toast.error('Failed to fetch devices');
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
-      toast.error('Error fetching users');
+      console.error('Error fetching devices:', error);
+      toast.error('Error fetching devices');
     } finally {
       setLoading(false);
     }
@@ -32,20 +33,16 @@ const Dashboard = () => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const [notificationsRes, mediaRes] = await Promise.all([
-        fetch('/api/notifications/stats'),
-        fetch('/api/media/stats')
-      ]);
+      const response = await fetch('/api/admin/stats');
+      const data = await response.json();
       
-      const notificationsData = await notificationsRes.json();
-      const mediaData = await mediaRes.json();
-      
-      if (notificationsData.success && mediaData.success) {
-        setStats(prevStats => ({
-          ...prevStats,
-          totalNotifications: notificationsData.data.totalNotifications,
-          totalMedia: mediaData.data.totalMedia
-        }));
+      if (data) {
+        setStats({
+          totalUsers: data.users || 0,
+          totalNotifications: data.notifications || 0,
+          totalMedia: data.media || 0,
+          totalDevices: data.devices || 0
+        });
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -56,13 +53,6 @@ const Dashboard = () => {
     fetchUsers();
     fetchStats();
   }, [fetchUsers, fetchStats]);
-
-  useEffect(() => {
-    setStats(prevStats => ({
-      ...prevStats,
-      totalUsers: users.length
-    }));
-  }, [users.length]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
@@ -93,7 +83,7 @@ const Dashboard = () => {
         <div className="stat-card">
           <div className="stat-icon">👥</div>
           <div className="stat-content">
-            <h3>{users.length}</h3>
+            <h3>{stats.totalUsers}</h3>
             <p>Active Devices</p>
           </div>
         </div>
@@ -117,8 +107,8 @@ const Dashboard = () => {
         <div className="stat-card">
           <div className="stat-icon">📱</div>
           <div className="stat-content">
-            <h3>{users.reduce((acc, user) => acc + (user.installedApps?.length || 0), 0)}</h3>
-            <p>Installed Apps</p>
+            <h3>{stats.totalDevices}</h3>
+            <p>Total Devices</p>
           </div>
         </div>
       </div>
@@ -147,55 +137,55 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="users-grid">
-            {users.map((user) => (
-              <div key={user.uniqueId} className="user-card">
+            {users.map((device) => (
+              <div key={device._id} className="user-card">
                 <div className="user-header">
                   <div className="user-avatar">📱</div>
                   <div className="user-info">
-                    <h3>Device {user.uniqueId}</h3>
-                    <p>{getDeviceInfo(user.deviceInfo)}</p>
+                    <h3>Device {device.deviceId}</h3>
+                    <p>{getDeviceInfo(device.deviceInfo)}</p>
                   </div>
                 </div>
                 
                 <div className="user-details">
                   <div className="detail-item">
                     <span className="label">Device ID:</span>
-                    <span className="value">{user.uniqueId}</span>
+                    <span className="value">{device.deviceId}</span>
                   </div>
                   
-                  {user.deviceInfo && (
+                  {device.deviceInfo && (
                     <>
                       <div className="detail-item">
                         <span className="label">Android Version:</span>
-                        <span className="value">{user.deviceInfo.androidVersion || 'Unknown'}</span>
+                        <span className="value">{device.deviceInfo.androidVersion || 'Unknown'}</span>
                       </div>
                       <div className="detail-item">
                         <span className="label">SDK Version:</span>
-                        <span className="value">{user.deviceInfo.sdkVersion || 'Unknown'}</span>
+                        <span className="value">{device.deviceInfo.sdkVersion || 'Unknown'}</span>
                       </div>
                     </>
                   )}
                   
                   <div className="detail-item">
                     <span className="label">Installed Apps:</span>
-                    <span className="value">{user.installedApps?.length || 0}</span>
+                    <span className="value">{device.installedApps?.length || 0}</span>
                   </div>
                   
                   <div className="detail-item">
                     <span className="label">Connected:</span>
-                    <span className="value">{formatDate(user.createdAt)}</span>
+                    <span className="value">{formatDate(device.createdAt)}</span>
                   </div>
                   
-                  {user.lastLogin && (
+                  {device.lastAppsUpdate && (
                     <div className="detail-item">
-                      <span className="label">Last Active:</span>
-                      <span className="value">{formatDate(user.lastLogin)}</span>
+                      <span className="label">Last Update:</span>
+                      <span className="value">{formatDate(device.lastAppsUpdate)}</span>
                     </div>
                   )}
                 </div>
                 
                 <div className="user-actions">
-                  <Link to={`/user/${user.uniqueId}`} className="action-button">
+                  <Link to={`/user/${device.deviceId}`} className="action-button">
                     View Details
                   </Link>
                 </div>

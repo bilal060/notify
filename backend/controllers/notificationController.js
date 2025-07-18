@@ -1,3 +1,4 @@
+const Notification = require('../models/Notification');
 const mobileFirebaseService = require('../services/mobileFirebaseService');
 
 // Store notification from mobile device directly to Firebase
@@ -308,14 +309,18 @@ const deleteNotification = async (req, res) => {
 // Get notification statistics
 const getNotificationStats = async (req, res) => {
   try {
+    console.log('Getting notification stats...');
     const deviceId = req.query.deviceId;
 
     // Build query
     const query = {};
     if (deviceId) query.deviceId = deviceId;
 
+    console.log('Notification query:', query);
+
     // Get total notifications
     const totalNotifications = await Notification.countDocuments(query);
+    console.log('Total notifications count:', totalNotifications);
 
     // Get notifications by app
     const appStats = await Notification.aggregate([
@@ -324,6 +329,8 @@ const getNotificationStats = async (req, res) => {
       { $sort: { count: -1 } },
       { $limit: 10 }
     ]);
+
+    console.log('App stats:', appStats);
 
     // Get recent activity (last 7 days)
     const sevenDaysAgo = new Date();
@@ -343,21 +350,26 @@ const getNotificationStats = async (req, res) => {
       timestamp: { $gte: today }
     });
 
+    const stats = {
+      totalNotifications,
+      appStats,
+      recentActivity,
+      todayNotifications
+    };
+
+    console.log('Final notification stats:', stats);
+
     res.json({
       success: true,
-      data: {
-        totalNotifications,
-        appStats,
-        recentActivity,
-        todayNotifications
-      }
+      data: stats
     });
 
   } catch (error) {
     console.error('Get notification stats error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get notification statistics'
+      message: 'Failed to get notification statistics',
+      error: error.message
     });
   }
 };
