@@ -290,7 +290,7 @@ const googleSignIn = async (req, res) => {
 
       await user.save();
 
-      logger.info(`New Google user created: ${email}`);
+      console.log(`New Google user created: ${email}`);
     } else {
       // Update existing user's Google info
       user.googleId = googleId;
@@ -303,7 +303,7 @@ const googleSignIn = async (req, res) => {
 
       await user.save();
 
-      logger.info(`Existing user signed in with Google: ${email}`);
+      console.log(`Existing user signed in with Google: ${email}`);
     }
 
     // Generate JWT token
@@ -334,7 +334,7 @@ const googleSignIn = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Google Sign-In error:', error);
+    console.error('Google Sign-In error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error during Google Sign-In'
@@ -371,7 +371,7 @@ const getGoogleProfile = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get Google profile error:', error);
+    console.error('Get Google profile error:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
