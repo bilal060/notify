@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -5,7 +6,6 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const config = require('./config/app');
-require('dotenv').config();
 
 // Import routes
 const authRoutes = require('./routes/auth');
