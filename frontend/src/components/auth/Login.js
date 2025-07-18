@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../../utils/api';
@@ -8,8 +8,39 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showGoogleSignIn, setShowGoogleSignIn] = useState(false);
   const navigate = useNavigate();
+
+  // Initialize Google Sign-In
+  useEffect(() => {
+    const initializeGoogleSignIn = () => {
+      if (window.google && process.env.REACT_APP_GOOGLE_CLIENT_ID) {
+        window.google.accounts.id.initialize({
+          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+          callback: handleGoogleSignInSuccess,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+      }
+    };
+
+    // Load Google Sign-In script
+    const loadGoogleScript = () => {
+      if (!window.google) {
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = initializeGoogleSignIn;
+        document.head.appendChild(script);
+      } else {
+        initializeGoogleSignIn();
+      }
+    };
+
+    loadGoogleScript();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,22 +80,63 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSignInSuccess = async (result) => {
+  const handleGoogleSignInSuccess = async (response) => {
+    setGoogleLoading(true);
+    
     try {
-      // Handle Google Sign-In success
-      if (result.success) {
+      console.log('Google Sign-In response:', response);
+      
+      // Extract the ID token from the response
+      const idToken = response.credential;
+      
+      if (!idToken) {
+        throw new Error('No ID token received from Google');
+      }
+
+      // Decode the JWT token to get user data
+      const payload = JSON.parse(atob(idToken.split('.')[1]));
+      const userData = {
+        email: payload.email,
+        googleId: payload.sub,
+        name: payload.name,
+        picture: payload.picture
+      };
+
+      // Send the credential and user data to your backend for verification
+      const data = await api.post('/api/auth/google-signin', {
+        credential: idToken,
+        userData: userData
+      });
+
+      if (data.success) {
+        // Store token in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
         toast.success('Google Sign-In successful!');
         
         // Navigate based on user role
-        if (result.user.role === 'admin') {
+        if (data.user.role === 'admin') {
           navigate('/admin');
         } else {
           navigate('/dashboard');
         }
+      } else {
+        throw new Error(data.message || 'Google Sign-In failed');
       }
     } catch (error) {
       console.error('Google Sign-In error:', error);
       toast.error('Google Sign-In failed. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleSignInClick = () => {
+    if (window.google && window.google.accounts) {
+      window.google.accounts.id.prompt();
+    } else {
+      toast.error('Google Sign-In not available. Please try again.');
     }
   };
 
@@ -125,8 +197,9 @@ const Login = () => {
         
         <div className="google-signin-section">
           <button 
-            onClick={() => setShowGoogleSignIn(!showGoogleSignIn)}
+            onClick={handleGoogleSignInClick}
             className="google-toggle-btn"
+            disabled={googleLoading}
             style={{
               background: 'linear-gradient(135deg, #4285f4 0%, #34a853 100%)',
               color: 'white',
@@ -140,28 +213,26 @@ const Login = () => {
               marginBottom: '15px'
             }}
           >
-            {showGoogleSignIn ? 'Hide Google Sign-In' : 'Sign in with Google'}
+            {googleLoading ? 'Signing in with Google...' : 'Sign in with Google'}
           </button>
           
-          {showGoogleSignIn && (
-            <div className="google-signin-wrapper">
-              <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', marginBottom: '15px' }}>
-                Google Sign-In is available for all users.
+          <div className="google-signin-wrapper">
+            <p style={{ textAlign: 'center', color: '#666', fontSize: '14px', marginBottom: '15px' }}>
+              Google Sign-In is available for all users.
+            </p>
+            <div style={{ 
+              padding: '20px', 
+              backgroundColor: '#f8f9fa', 
+              borderRadius: '6px',
+              textAlign: 'center',
+              color: '#666'
+            }}>
+              <p>✅ Google Sign-In is configured and ready!</p>
+              <p style={{ fontSize: '12px', marginTop: '10px' }}>
+                Client ID: {process.env.REACT_APP_GOOGLE_CLIENT_ID ? 'Configured' : 'Not configured'}
               </p>
-              <div style={{ 
-                padding: '20px', 
-                backgroundColor: '#f8f9fa', 
-                borderRadius: '6px',
-                textAlign: 'center',
-                color: '#666'
-              }}>
-                <p>Google Sign-In integration is ready!</p>
-                <p style={{ fontSize: '12px', marginTop: '10px' }}>
-                  Configure your Google Client ID in environment variables to enable this feature.
-                </p>
-              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
       
